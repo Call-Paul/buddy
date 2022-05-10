@@ -1,16 +1,15 @@
 # buddy
-
+#@author Paul Franken
 Softwareprojekt FH Wedel 2022
 
-## Getting Started
+Dieses Softwareprojekt entsteht im Kontext der Cross Innovation Class 2022.
 
-This project is a starting point for a Flutter application.
+Das Team: Amy Freitag, Emmy Newell, Jan Luka, Peter Schütze, Selma      und Paul Franken
 
-A few resources to get you started if this is your first Flutter project:
+Der Praxispartner: Hamburg Marketing
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Bei der App handelt es sich um ein Buddy-System mit Match-Prinzip im Fachkräftekontext um dem
+Wissensverlust zu verhindern.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
