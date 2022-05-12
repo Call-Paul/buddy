@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "883591983037",
+    "project_id": "crossinnovationclass2022",
+    "storage_bucket": "crossinnovationclass2022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883591983037:android:f7a0246e41444ea63b2cd4",
+        "android_client_info": {
+          "package_name": "com.paulj.buddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883591983037-04f0c9d36hv2f1pmdg4ged64bv6uvq6h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJxDCMG1gw0lfmSDeb0ZRlnV389aOdlSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883591983037-04f0c9d36hv2f1pmdg4ged64bv6uvq6h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
