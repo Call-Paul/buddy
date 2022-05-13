@@ -26,6 +26,58 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
+      body: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Row(children: [
+                isSearching
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: GestureDetector(
+                            onTap: () {
+                              isSearching = false;
+                              searchEditingController.clear();
+                              setState(() {});
+                            },
+                            child: const Icon(Icons.arrow_back)))
+                    : Container(),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.grey,
+                            width: 1.0,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(24)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: TextField(
+                          onChanged: (text) {
+                            if (text == "") {
+                              isSearching = false;
+                              searchEditingController.clear();
+                              setState(() {});
+                            }else {
+                              onSearchBtnClick();
+                            }
+                          },
+                          controller: searchEditingController,
+                          decoration: const InputDecoration(
+                              border: InputBorder.none, hintText: "Username"),
+                        )),
+                        GestureDetector(child: const Icon(Icons.search))
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
+              isSearching ? searchUsersList() : chatList()
+            ],
+          )),
     );
   }
 }
