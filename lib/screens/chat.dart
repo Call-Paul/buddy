@@ -37,18 +37,43 @@ class _ChatState extends State<Chat> {
     }
   }
 
+  Widget chatMessage(String message, bool sendByMe) {
+    return Row(
+      mainAxisAlignment: sendByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+            bottomRight: sendByMe? Radius.circular(0): Radius.circular(24),
+            topRight: Radius.circular(24),
+            bottomLeft:  sendByMe ? Radius.circular(24): Radius.circular(0)),
+            color: Colors.amberAccent),
+        padding: EdgeInsets.all(16),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.black),
+        ),
+
+      ),
+    ]);
+  }
+
   Widget chatMessages() {
     return StreamBuilder(
       stream: messageStream,
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
+                padding: EdgeInsets.only(bottom: 70, top: 16),
                 itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+                reverse: true,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds =
                       (snapshot.data! as QuerySnapshot).docs[index];
-                  return Text(ds["message"]);
+                  return chatMessage(ds["message"], myUserName == ds["sendBy"]);
                 })
             : const Center(
                 child: CircularProgressIndicator(),
@@ -121,7 +146,6 @@ class _ChatState extends State<Chat> {
                     GestureDetector(
                         onTap: () {
                           addMessage();
-                          log("HI");
                         },
                         child: const Icon(Icons.send))
                   ],
