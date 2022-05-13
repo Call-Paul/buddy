@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:buddy/screens/sign_in.dart';
 import 'package:buddy/services/auth.dart';
+import 'package:buddy/services/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import 'chat.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -8,11 +14,67 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool isSearching = false;
+  Stream? usersStream;
+  TextEditingController searchEditingController = TextEditingController();
+
+  onSearchBtnClick() async {
+    usersStream =
+        await DataBaseMethods().getUserByUsername(searchEditingController.text);
+    isSearching = true;
+    setState(() {});
+  }
+
+  Widget chatList() {
+    return Container();
+  }
+
+  Widget searchListUser(String name, String email, String username) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Chat(username, name)));
+      },
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: const Icon(Icons.email),
+          ),
+          SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text(name), Text(email)],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget searchUsersList() {
+    return StreamBuilder(
+      stream: usersStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds =
+                      (snapshot.data! as QuerySnapshot).docs[index];
+                  return searchListUser(ds["name"], ds["email"], ds["username"]);
+                },
+              )
+            : const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Buddy App'),
+        title: const Text('Buddy App'),
         actions: [
           GestureDetector(
             onTap: () {
