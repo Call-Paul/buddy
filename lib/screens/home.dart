@@ -6,6 +6,7 @@ import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../helperfunctions/sharedpref_helper.dart';
 import 'chat.dart';
 
 class Home extends StatefulWidget {
@@ -14,6 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late String myName, myUserName, myEmail;
   bool isSearching = false;
   Stream? usersStream;
   TextEditingController searchEditingController = TextEditingController();
@@ -29,9 +31,29 @@ class _HomeState extends State<Home> {
     return Container();
   }
 
+  getMyInfoFormSharedPreferences() async {
+    myName = (await SharedPreferencesHelper().getUserDisplayName())!;
+    myUserName = (await SharedPreferencesHelper().getUserName())!;
+    myEmail = (await SharedPreferencesHelper().getUserEmail())!;
+  }
+
+  getChatRoomIdByUsernames(String userA, String userB) {
+    if (userA.substring(0, 1).codeUnitAt(0) >
+        userB.substring(0, 1).codeUnitAt(0)) {
+      return "$userB\_$userA";
+    } else {
+      return "$userA\_$userB";
+    }
+  }
+
   Widget searchListUser(String name, String email, String username) {
     return GestureDetector(
       onTap: () {
+        var chatRoomId = getChatRoomIdByUsernames(myUserName, username);
+        Map<String, dynamic> chatRoomInfoMap = {
+          "users" : [myUserName, username]
+        };
+        DataBaseMethods().createChatRoom(chatRoomId, chatRoomInfoMap);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Chat(username, name)));
       },
@@ -68,6 +90,13 @@ class _HomeState extends State<Home> {
             : const Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  @override
+  void initState() {
+    log("DATA");
+    getMyInfoFormSharedPreferences();
+    super.initState();
   }
 
   @override

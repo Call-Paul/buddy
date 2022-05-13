@@ -34,11 +34,14 @@ class AuthMethods {
         await _firebaseAuth.signInWithCredential(credential);
     User? userDetails = result.user;
 
-    if (userDetails != null) {
-
-      SharedPreferencesHelper().saveUserDisplayName(userDetails.displayName!);
+    if (userDetails != null ) {
+      print(userDetails.displayName);
+      await SharedPreferencesHelper().saveUserDisplayName(userDetails.displayName!);
       SharedPreferencesHelper().saveUserEmailKey(userDetails.email!);
       SharedPreferencesHelper().saveUserIdKey(userDetails.uid);
+      SharedPreferencesHelper().saveUserName(userDetails.email!.replaceAll("@gmail.com", ""));
+
+     SharedPreferencesHelper().getUserDisplayName().then((value) => print(value));
 
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,

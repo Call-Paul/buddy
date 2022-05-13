@@ -7,7 +7,7 @@ class SharedPreferencesHelper{
 
   static String userIdKey = "USERKEY";
   static String userNameKey = "USERNAMEKEY";
-  static String userDisplayName = "USERDISPLAYKEY";
+  static String userDisplayNameKey = "USERDISPLAYKEY";
   static String userEmailKey = "USEREMAILKEY";
   static String userProfileKey = "USERPROFILEKEY";
 
@@ -18,22 +18,22 @@ class SharedPreferencesHelper{
 
   Future<bool> saveUserDisplayName(String userDisplayName) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.setString(userDisplayName, userDisplayName);
+    return preferences.setString(userDisplayNameKey, userDisplayName);
   }
 
-  Future<bool> saveUserEmailKey(String userEmailKey) async{
+  Future<bool> saveUserEmailKey(String userEmail) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.setString(userEmailKey, userEmailKey);
+    return preferences.setString(userEmailKey, userEmail);
   }
 
-  Future<bool> saveUserProfileKey(String userProfileKey) async{
+  Future<bool> saveUserProfileKey(String userProfile) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.setString(userProfileKey, userProfileKey);
+    return preferences.setString(userProfileKey, userProfile);
   }
 
-  Future<bool> saveUserIdKey(String userIdKey) async{
+  Future<bool> saveUserIdKey(String userId) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.setString(userIdKey, userIdKey);
+    return preferences.setString(userIdKey, userId);
   }
 
   //getData
@@ -49,7 +49,7 @@ class SharedPreferencesHelper{
 
   Future<String?> getUserDisplayName() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(userDisplayName);
+    return preferences.getString(userDisplayNameKey);
   }
 
   Future<String?> getUserProfile() async{
