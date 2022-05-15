@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late String myName, myUserName, myEmail;
+  late String myName, myUserName, myEmail, myUserId;
   bool isSearching = false;
   Stream? usersStream;
   TextEditingController searchEditingController = TextEditingController();
@@ -27,6 +27,8 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+
+
   Widget chatList() {
     return Container();
   }
@@ -35,6 +37,7 @@ class _HomeState extends State<Home> {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
+    myUserId = (await SharedPreferencesHelper().getUserIdKey())!;
   }
 
   getChatRoomIdByUsernames(String userA, String userB) {
@@ -53,7 +56,7 @@ class _HomeState extends State<Home> {
         Map<String, dynamic> chatRoomInfoMap = {
           "users" : [myUserName, username]
         };
-        DataBaseMethods().createChatRoom(chatRoomId, chatRoomInfoMap);
+        DataBaseMethods().createChatRoom(chatRoomId, chatRoomInfoMap, myUserId);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Chat(username, name)));
       },
