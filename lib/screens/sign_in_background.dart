@@ -37,13 +37,9 @@ class SigInBackground extends StatelessWidget {
           Positioned(
             bottom: 0,
             left: 0,
-            child: Image.asset("assets/bottom1.png", width: size.width),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
             child: Image.asset("assets/bottom2.png", width: size.width),
           ),
+
           child
         ],
       ),

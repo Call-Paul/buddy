@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
+import 'package:buddy/screens/createProfile.dart';
 import 'package:buddy/screens/home.dart';
 import 'package:buddy/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,8 +42,6 @@ class AuthMethods {
       SharedPreferencesHelper().saveUserIdKey(userDetails.uid);
       SharedPreferencesHelper().saveUserName(userDetails.email!.replaceAll("@gmail.com", ""));
 
-     SharedPreferencesHelper().getUserDisplayName().then((value) => print(value));
-
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,
         "username": userDetails.email!.replaceAll("@gmail.com", ""),
@@ -50,11 +49,13 @@ class AuthMethods {
         "userid": userDetails.uid
       };
 
-
-
+      String name = "";
+      SharedPreferencesHelper().getUserDisplayName().then((value) => name = value!);
+      String userId = "";
+      SharedPreferencesHelper().getUserId().then((value) => userId = value!);
       DataBaseMethods().addUserInfoToDB(userDetails.uid, userInfoMap).then(
           (value) => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Home())));
+              context, MaterialPageRoute(builder: (context) => CreateProfile(name, userId))));
     }
   }
 

@@ -37,7 +37,7 @@ class SharedPreferencesHelper{
   }
 
   //getData
-  Future<String?> getUserIdKey() async{
+  Future<String?> getUserId() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(userIdKey);
   }

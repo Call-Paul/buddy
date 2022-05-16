@@ -21,7 +21,7 @@ class _SignInState extends State<SignIn> {
             Container(
               alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: 40),
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.only(bottom: 0, top: 100),
               child: const Text(
                 "BUDDY",
                 style: TextStyle(
@@ -36,7 +36,7 @@ class _SignInState extends State<SignIn> {
             ,Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: 40),
-                margin: EdgeInsets.only(bottom: 40),
+                margin: EdgeInsets.only(bottom: 150),
                 child: const Text(
                   "Willkommen im Hafen",
                   style: TextStyle(

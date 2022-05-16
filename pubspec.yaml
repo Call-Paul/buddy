@@ -12,10 +12,13 @@ dependencies:
   google_fonts:
   firebase_auth:
   firebase_core:
+  firebase_storage:
   google_sign_in:
   shared_preferences:
   random_string:
   cloud_firestore:
+  image_picker:
+  image_cropper:
 
   cupertino_icons: ^1.0.2
 

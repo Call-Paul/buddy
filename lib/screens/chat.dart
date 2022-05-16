@@ -25,7 +25,7 @@ class _ChatState extends State<Chat> {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
-    myUserId = (await SharedPreferencesHelper().getUserIdKey())!;
+    myUserId = (await SharedPreferencesHelper().getUserId())!;
     chatRoomId = getChatRoomIdByUsernames(widget.username, myUserName);
   }
 

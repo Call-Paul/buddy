@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
-    myUserId = (await SharedPreferencesHelper().getUserIdKey())!;
+    myUserId = (await SharedPreferencesHelper().getUserId())!;
   }
 
   getChatRoomIdByUsernames(String userA, String userB) {
