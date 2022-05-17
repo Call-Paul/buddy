@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'createProfile.dart';
+
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
@@ -22,7 +24,6 @@ class _SignInState extends State<SignIn> {
             Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
-                margin: EdgeInsets.only(bottom: 0, top: 100),
                 child: Text(
                   "BUDDY",
                   style: TextStyle(
@@ -35,6 +36,7 @@ class _SignInState extends State<SignIn> {
             Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                margin: EdgeInsets.only(bottom: size.height * 0.04),
                 child: Text(
                   "Willkommen im Hafen",
                   style: TextStyle(
@@ -87,7 +89,17 @@ class _SignInState extends State<SignIn> {
             ),
             GestureDetector(
               onTap: () {
-                AuthMethods().signInWithGoogle(context);
+
+                //DEBUG
+                Map<String, dynamic> userInfoMap = {
+                  "email": "abc",
+                  "name": "abc test",
+                  "userid": "123"
+                };
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => CreateProfile(userInfoMap)));
+
+                //AuthMethods().signInWithGoogle(context);
               },
               child: Container(
                 margin: EdgeInsets.only(

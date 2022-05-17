@@ -32,28 +32,28 @@ class _CreateProfile extends State<CreateProfile> {
           children: <Widget>[
             Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                margin: const EdgeInsets.only(bottom: 10, top: 70),
-                child: const Text(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                margin: EdgeInsets.only(top: size.height * 0.08),
+                child: Text(
                   "BUDDY",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(229, 36, 39, 1),
-                      fontSize: 45,
-                      letterSpacing: 8),
+                      fontSize: size.width * 0.13,
+                      letterSpacing: size.width * 0.02),
                   // textAlign: TextAlign.left
                 )),
             Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                margin: const EdgeInsets.only(bottom: 40),
-                child: const Text(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                margin: EdgeInsets.only(bottom: size.height * 0.05),
+                child: Text(
                   "Profil erstellen",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
-                      fontSize: 15,
-                      letterSpacing: 8),
+                      fontSize: size.width * 0.043,
+                      letterSpacing: size.width * 0.01),
                   // textAlign: TextAlign.left
                 )),
             UserImage(
@@ -66,21 +66,21 @@ class _CreateProfile extends State<CreateProfile> {
             ),
             Container(
               alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
               child: const TextField(
                 decoration: InputDecoration(labelText: "Nutzername"),
               ),
             ),
             Container(
               alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
               child: const TextField(
                 decoration: InputDecoration(labelText: "Unternehmen"),
               ),
             ),
             Container(
               alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
               child: const TextField(
                 decoration: InputDecoration(labelText: "Erfahrungen"),
               ),
@@ -88,7 +88,7 @@ class _CreateProfile extends State<CreateProfile> {
 
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 40, left: 0),
+              margin: EdgeInsets.only(top: size.height * 0.04, left: 0),
               child: RaisedButton(
                 onPressed: () {
                   DataBaseMethods().addUserInfoToDB(widget.userInfoMap["userid"], widget.userInfoMap);
@@ -97,15 +97,15 @@ class _CreateProfile extends State<CreateProfile> {
                       MaterialPageRoute(builder: (context) => Home()));
                 },
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
+                    borderRadius: BorderRadius.circular(60.0)),
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(0),
                 child: Container(
                   alignment: Alignment.center,
-                  height: 50.0,
+                  height: size.height * 0.07,
                   width: size.width * 0.5,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(80.0),
+                      borderRadius: BorderRadius.circular(60.0),
                       gradient: const LinearGradient(colors: [
                         Color.fromARGB(255, 255, 136, 34),
                         Color.fromARGB(255, 255, 177, 41)
@@ -148,16 +148,15 @@ class _UserImageState extends State<UserImage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Column(children: [
       if (profileImg == null)
         SizedBox(
-            height: 100,
-            width: 100,
+            height: size.width * 0.2,
+            width: size.width * 0.2,
             child:
                 Stack(clipBehavior: Clip.none, fit: StackFit.expand, children: [
               CircleAvatar(
-                radius: 30,
-
                 backgroundColor: Colors.black87,
                 child: Text(widget.name.substring(0, 1) +
                     widget.name.substring(widget.name.lastIndexOf(' ') + 1,
@@ -176,7 +175,7 @@ class _UserImageState extends State<UserImage> {
                       Icons.camera_alt_outlined,
                       color: Colors.blue,
                     ),
-                    padding: const EdgeInsets.all(6.0),
+                    padding: EdgeInsets.all(size.width * 0.02),
                     shape: const CircleBorder(),
                   )),
             ])),
@@ -186,14 +185,13 @@ class _UserImageState extends State<UserImage> {
           highlightColor: Colors.transparent,
           onTap: () => _selectPhoto(),
           child: SizedBox(
-              height: 100,
-              width: 100,
+              height: size.width * 0.2,
+              width: size.width * 0.2,
               child: Stack(
                   clipBehavior: Clip.none,
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                        radius: 30,
                         backgroundColor: Colors.black87,
                         backgroundImage: Image.network(profileImg!).image),
                     Positioned(
@@ -209,7 +207,7 @@ class _UserImageState extends State<UserImage> {
                             Icons.camera_alt_outlined,
                             color: Colors.blue,
                           ),
-                          padding: const EdgeInsets.all(6.0),
+                          padding:  EdgeInsets.all(size.width * 0.02),
                           shape: const CircleBorder(),
                         )),
                   ])), // AppRoundImage.url
