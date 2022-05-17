@@ -13,58 +13,57 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SigInBackground(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 40),
-              margin: EdgeInsets.only(bottom: 0, top: 100),
-              child: const Text(
-                "BUDDY",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(229, 36, 39, 1),
-                  fontSize: 45,
-                  letterSpacing: 8
-                ),
-               // textAlign: TextAlign.left
-              )
-            )
-            ,Container(
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                margin: EdgeInsets.only(bottom: 150),
-                child: const Text(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                margin: EdgeInsets.only(bottom: 0, top: 100),
+                child: Text(
+                  "BUDDY",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(229, 36, 39, 1),
+                      fontSize: size.width * 0.13,
+                      letterSpacing: size.width * 0.02),
+                  // textAlign: TextAlign.left
+                )),
+            Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                child: Text(
                   "Willkommen im Hafen",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
-                      fontSize: 15,
-                      letterSpacing: 8
-                  ),
+                      fontSize: size.width * 0.043,
+                      letterSpacing: size.width * 0.01),
                   // textAlign: TextAlign.left
-                )
-            ),
+                )),
             GestureDetector(
               onTap: () {
                 AuthMethods().signInWithGoogle(context);
               },
               child: Container(
-                margin: EdgeInsets.only(top: 150, left: 40, right: 40),
+                margin: EdgeInsets.only(
+                    top: size.height * 0.2,
+                    left: (size.width * 0.1),
+                    right: (size.width * 0.1)),
                 child: Row(children: [
                   Container(
-                    margin: EdgeInsets.only(left: 10, right: 30),
+                    margin: EdgeInsets.only(left:  (size.width * 0.06), right: (size.width * 0.04)),
                     child: Image.asset('assets/images/g_logo.png'),
-                    width: 25,
-                    height: 25,
+                    width: size.width * 0.09,
+                    height: size.height * 0.04,
                   ),
-                  const Text(
+                  Text(
                     'MIT GOOGLE ANMELDEN',
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: (size.width * 0.045),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'SansSerif',
                         color: Color.fromRGBO(225, 242, 249, 1)),
@@ -82,7 +81,8 @@ class _SignInState extends State<SignIn> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    EdgeInsets.symmetric( vertical: size.height*0.015),
               ),
             ),
             GestureDetector(
@@ -90,18 +90,21 @@ class _SignInState extends State<SignIn> {
                 AuthMethods().signInWithGoogle(context);
               },
               child: Container(
-                margin: EdgeInsets.only(top: 20, left: 40, right: 40),
+                margin: EdgeInsets.only(
+                    top: size.height * 0.03,
+                    left: (size.width * 0.1),
+                    right: (size.width * 0.1)),
                 child: Row(children: [
                   Container(
-                    margin: EdgeInsets.only(left: 10, right: 30),
+                    margin: EdgeInsets.only(left: (size.width * 0.06), right: (size.width * 0.04)),
                     child: const Icon(Icons.facebook),
-                    width: 25,
-                    height: 25,
+                    width: size.width * 0.09,
+                    height: size.height * 0.04,
                   ),
-                  const Text(
+                  Text(
                     'MIT FACEBOOK ANMELDEN',
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: (size.width * 0.045),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'SansSerif',
                         color: Color.fromRGBO(225, 242, 249, 1)),
@@ -119,7 +122,8 @@ class _SignInState extends State<SignIn> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    EdgeInsets.symmetric( vertical: size.height*0.015),
               ),
             ),
           ],

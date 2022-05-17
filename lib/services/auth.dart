@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthMethods {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  getCurrentUseres()async {
+  getCurrentUseres() async {
     return await auth.currentUser;
   }
 
@@ -35,31 +35,27 @@ class AuthMethods {
         await _firebaseAuth.signInWithCredential(credential);
     User? userDetails = result.user;
 
-    if (userDetails != null ) {
+    if (userDetails != null) {
       print(userDetails.displayName);
-      await SharedPreferencesHelper().saveUserDisplayName(userDetails.displayName!);
+      await SharedPreferencesHelper()
+          .saveUserDisplayName(userDetails.displayName!);
       SharedPreferencesHelper().saveUserEmailKey(userDetails.email!);
       SharedPreferencesHelper().saveUserIdKey(userDetails.uid);
-      SharedPreferencesHelper().saveUserName(userDetails.email!.replaceAll("@gmail.com", ""));
+
 
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,
-        "username": userDetails.email!.replaceAll("@gmail.com", ""),
         "name": userDetails.displayName,
         "userid": userDetails.uid
       };
 
-      String name = "";
-      SharedPreferencesHelper().getUserDisplayName().then((value) => name = value!);
-      String userId = "";
-      SharedPreferencesHelper().getUserId().then((value) => userId = value!);
-      DataBaseMethods().addUserInfoToDB(userDetails.uid, userInfoMap).then(
-          (value) => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => CreateProfile(name, userId))));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => CreateProfile(userInfoMap)));
+
     }
   }
 
-  Future signOut() async{
+  Future signOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     await auth.signOut();

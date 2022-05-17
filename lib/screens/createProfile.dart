@@ -1,19 +1,19 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:buddy/screens/home.dart';
 import 'package:buddy/screens/sign_in.dart';
 import 'package:buddy/screens/sign_in_background.dart';
-import 'package:buddy/services/storage.dart';
+import 'package:buddy/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateProfile extends StatefulWidget {
-  final String name, userId;
+  final Map<String, dynamic> userInfoMap;
 
-  CreateProfile(this.name, this.userId);
+  CreateProfile(this.userInfoMap);
 
   @override
   _CreateProfile createState() => _CreateProfile();
@@ -24,6 +24,7 @@ class _CreateProfile extends State<CreateProfile> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SigInBackground(
         child: Column(
@@ -32,7 +33,7 @@ class _CreateProfile extends State<CreateProfile> {
             Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                margin: const EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10, top: 70),
                 child: const Text(
                   "BUDDY",
                   style: TextStyle(
@@ -55,10 +56,14 @@ class _CreateProfile extends State<CreateProfile> {
                       letterSpacing: 8),
                   // textAlign: TextAlign.left
                 )),
-            UserImage(onFileChanged: (profileImg) {
-              setState(() {});
-              this.profileImg = profileImg;
-            }, name: widget.name, userid: widget.userId,),
+            UserImage(
+              onFileChanged: (profileImg) {
+                setState(() {});
+                this.profileImg = profileImg;
+              },
+              name: widget.userInfoMap["name"],
+              userid: widget.userInfoMap["userid"],
+            ),
             Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -79,17 +84,46 @@ class _CreateProfile extends State<CreateProfile> {
               child: const TextField(
                 decoration: InputDecoration(labelText: "Erfahrungen"),
               ),
-            )
+            ),
+
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 40, left: 0),
+              child: RaisedButton(
+                onPressed: () {
+                  DataBaseMethods().addUserInfoToDB(widget.userInfoMap["userid"], widget.userInfoMap);
+
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Home()));
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0)),
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  width: size.width * 0.5,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(80.0),
+                      gradient: const LinearGradient(colors: [
+                        Color.fromARGB(255, 255, 136, 34),
+                        Color.fromARGB(255, 255, 177, 41)
+                      ])
+                      // LinearGradient
+                      ),
+                  // BoxDecoration
+                  padding: const EdgeInsets.all(0),
+                  child: const Text(
+                    "Registrieren",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold), // TextStyle
+                  ), // Text
+                ), // Container
+              ), // RaisedButton
+            ) // Container
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => SignIn()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -123,6 +157,7 @@ class _UserImageState extends State<UserImage> {
                 Stack(clipBehavior: Clip.none, fit: StackFit.expand, children: [
               CircleAvatar(
                 radius: 30,
+
                 backgroundColor: Colors.black87,
                 child: Text(widget.name.substring(0, 1) +
                     widget.name.substring(widget.name.lastIndexOf(' ') + 1,
@@ -191,16 +226,16 @@ class _UserImageState extends State<UserImage> {
                   Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.camera),
-                        title: Text("Kamara"),
+                        leading: const Icon(Icons.camera),
+                        title: const Text("Kamara"),
                         onTap: () {
                           Navigator.of(context).pop();
                           pickImage(ImageSource.camera);
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.browse_gallery),
-                        title: Text("Gallerie"),
+                        leading: const Icon(Icons.browse_gallery),
+                        title: const Text("Gallerie"),
                         onTap: () {
                           Navigator.of(context).pop();
                           pickImage(ImageSource.gallery);
