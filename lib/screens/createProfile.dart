@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/screens/home.dart';
 import 'package:buddy/screens/sign_in.dart';
-import 'package:buddy/screens/sign_in_background.dart';
+import 'package:buddy/screens/helperScreens/sign_in_background.dart';
 import 'package:buddy/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,4 +1,4 @@
-import 'package:buddy/screens/sign_in_background.dart';
+import 'package:buddy/screens/helperScreens/sign_in_background.dart';
 import 'package:buddy/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

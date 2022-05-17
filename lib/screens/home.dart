@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:buddy/screens/helperScreens/navdrawer.dart';
 import 'package:buddy/screens/sign_in.dart';
 import 'package:buddy/services/auth.dart';
 import 'package:buddy/services/database.dart';
@@ -105,6 +106,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawer(),
       appBar: AppBar(
         title: const Text('Buddy App'),
         actions: [
