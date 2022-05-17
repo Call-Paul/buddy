@@ -89,17 +89,7 @@ class _SignInState extends State<SignIn> {
             ),
             GestureDetector(
               onTap: () {
-
-                //DEBUG
-                Map<String, dynamic> userInfoMap = {
-                  "email": "abc",
-                  "name": "abc test",
-                  "userid": "123"
-                };
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => CreateProfile(userInfoMap)));
-
-                //AuthMethods().signInWithGoogle(context);
+                AuthMethods().signInWithGoogle(context);
               },
               child: Container(
                 margin: EdgeInsets.only(

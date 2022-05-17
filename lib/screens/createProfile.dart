@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/screens/home.dart';
 import 'package:buddy/screens/sign_in.dart';
 import 'package:buddy/screens/sign_in_background.dart';
@@ -21,6 +22,10 @@ class CreateProfile extends StatefulWidget {
 
 class _CreateProfile extends State<CreateProfile> {
   String profileImg = "";
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController companyController = TextEditingController();
+  TextEditingController experienceController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class _CreateProfile extends State<CreateProfile> {
                   "BUDDY",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(229, 36, 39, 1),
+                      color: const Color.fromRGBO(229, 36, 39, 1),
                       fontSize: size.width * 0.13,
                       letterSpacing: size.width * 0.02),
                   // textAlign: TextAlign.left
@@ -67,8 +72,9 @@ class _CreateProfile extends State<CreateProfile> {
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
-              child: const TextField(
-                decoration: InputDecoration(labelText: "Nutzername"),
+              child: TextField(
+                controller: usernameController,
+                decoration: const InputDecoration(labelText: "Nutzername"),
               ),
             ),
             Container(
@@ -91,6 +97,11 @@ class _CreateProfile extends State<CreateProfile> {
               margin: EdgeInsets.only(top: size.height * 0.04, left: 0),
               child: RaisedButton(
                 onPressed: () {
+                  SharedPreferencesHelper().saveUserName(usernameController.text);
+                  Map<String, dynamic> addInformation = {
+                    "username" : usernameController.text
+                  };
+                  widget.userInfoMap.addAll(addInformation);
                   DataBaseMethods().addUserInfoToDB(widget.userInfoMap["userid"], widget.userInfoMap);
 
                   Navigator.pushReplacement(context,
