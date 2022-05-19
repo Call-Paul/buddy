@@ -73,7 +73,7 @@ class _SignInState extends State<SignIn> {
                 ]),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
-                  color: Color.fromRGBO(227, 0, 15, 1),
+                  color: Color.fromRGBO(171, 43, 84, 1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
@@ -84,7 +84,7 @@ class _SignInState extends State<SignIn> {
                   ],
                 ),
                 padding:
-                    EdgeInsets.symmetric( vertical: size.height*0.015),
+                    EdgeInsets.symmetric( vertical: size.height*0.010),
               ),
             ),
             GestureDetector(
@@ -125,7 +125,7 @@ class _SignInState extends State<SignIn> {
                   ],
                 ),
                 padding:
-                    EdgeInsets.symmetric( vertical: size.height*0.015),
+                    EdgeInsets.symmetric( vertical: size.height*0.010),
               ),
             ),
           ],
