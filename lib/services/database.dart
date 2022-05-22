@@ -9,7 +9,7 @@ class DataBaseMethods {
     final userRef = FirebaseFirestore.instance.collection('users');
     await userRef.get().then((snapshot) {
       snapshot.docs.forEach((doc) {
-        if(doc.get("userid").toString() == accountId){
+        if(doc.get("accountid").toString() == accountId){
           result = true;
         }
       });

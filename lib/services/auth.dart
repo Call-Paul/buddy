@@ -46,7 +46,6 @@ class AuthMethods {
       SharedPreferencesHelper().saveUserId(uuid);
       SharedPreferencesHelper().saveAccountId(userDetails.uid!);
 
-
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,
         "name": userDetails.displayName,
@@ -54,15 +53,28 @@ class AuthMethods {
         "accountid": userDetails.uid
       };
 
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => CreateProfile(userInfoMap)));
-
+      DataBaseMethods().checkIfAccountExists(userDetails.uid).then((value) => {
+            if (value)
+              {
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Home()))
+              }
+            else
+              {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CreateProfile(userInfoMap)))
+              }
+          });
     }
   }
 
   Future signOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    _googleSignIn.signOut();
     await auth.signOut();
   }
 }

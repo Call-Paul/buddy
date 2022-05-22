@@ -28,6 +28,7 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: () {
+              AuthMethods().signOut();
               AuthMethods().signOut().then((value) => Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => SignIn())));
             },

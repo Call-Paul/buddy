@@ -73,8 +73,8 @@ class _SignInState extends State<SignIn> {
                   children: [
                     GestureDetector(
                       onTap:() {
-                        //AuthMethods().signInWithGoogle(context);
-                        DataBaseMethods().checkIfAccountExists("7fca7e05-669d-444b-8ecf-12b625e3473a").then((value) => print(value));
+                        AuthMethods().signInWithGoogle(context);
+
                         },
                       child: Container(
                         color: const Color.fromRGBO(220, 220, 220, 0.8),
