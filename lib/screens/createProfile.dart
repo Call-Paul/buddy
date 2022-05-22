@@ -3,14 +3,14 @@ import 'dart:ui';
 
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/screens/home.dart';
-import 'package:buddy/screens/sign_in.dart';
-import 'package:buddy/screens/helperScreens/sign_in_background.dart';
-import 'package:buddy/services/database.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../services/database.dart';
 
 class CreateProfile extends StatefulWidget {
   final Map<String, dynamic> userInfoMap;
@@ -25,7 +25,10 @@ class _CreateProfile extends State<CreateProfile> {
   String profileImg = "";
   TextEditingController usernameController = TextEditingController();
   TextEditingController companyController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
+  TextEditingController experienceController1 = TextEditingController();
+  TextEditingController experienceController2 = TextEditingController();
+  TextEditingController experienceController3 = TextEditingController();
+  TextEditingController experienceController4 = TextEditingController();
   List selectedMeetings = [];
 
   @override
@@ -36,274 +39,401 @@ class _CreateProfile extends State<CreateProfile> {
     usernameController.addListener(() {
       setState(() {});
     });
-    experienceController.addListener(() {
+    experienceController1.addListener(() {
+      setState(() {});
+    });
+    experienceController2.addListener(() {
+      setState(() {});
+    });
+    experienceController3.addListener(() {
+      setState(() {});
+    });
+    experienceController4.addListener(() {
       setState(() {});
     });
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SigInBackground(
-        child:
-            ListView(physics: const NeverScrollableScrollPhysics(), children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
-                  margin: EdgeInsets.only(top: size.height * 0.03),
-                  child: Text(
-                    "BUDDY",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromRGBO(229, 36, 39, 1),
-                        fontSize: size.width * 0.085,
-                        letterSpacing: size.width * 0.02),
-                    // textAlign: TextAlign.left
-                  )),
-              Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.09),
-                  margin: EdgeInsets.only(bottom: size.height * 0.05),
-                  child: Text(
-                    "Profil erstellen",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        fontSize: size.width * 0.04,
-                        letterSpacing: size.width * 0.01),
-                    // textAlign: TextAlign.left
-                  )),
-
-              UserImage(
-                onFileChanged: (profileImg) {
-                  setState(() {});
-                  this.profileImg = profileImg;
-                },
-                name: widget.userInfoMap["name"],
-                userid: widget.userInfoMap["userid"],
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.1, vertical: size.height * 0.01),
-                child: TextFormField(
-                  maxLength: 18,
-                  controller: usernameController,
-                  decoration: InputDecoration(
-                    counterText: usernameController.text.length < 10
-                        ? ''
-                        : '${usernameController.text.length}/18',
-                    labelText: "Nutzername",
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: BorderSide(),
-                    ),
-                    //fillColor: Colors.green
-                  ),
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.1, vertical: size.height * 0.01),
-                child: TextFormField(
-                    maxLength: 30,
-                    controller: companyController,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    decoration: InputDecoration(
-                      counterText: companyController.text.length < 20
-                          ? ''
-                          : '${companyController.text.length}/30',
-                      labelText: "Unternehmen",
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: BorderSide(),
-                      ),
-                      //fillColor: Colors.green
-                    ),
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                    )),
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(
-                    horizontal: size.width * 0.1, vertical: size.height * 0.01),
-                child: TextFormField(
-                    controller: experienceController,
-                    maxLength: 150,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.newline,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      counterText: experienceController.text.length < 120
-                          ? ''
-                          : '${experienceController.text.length}/150',
-                      labelText: "Erfahrungen",
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: BorderSide(),
-                      ),
-                      //fillColor: Colors.green
-                    ),
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                    )),
-              ),
-
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
-                alignment: Alignment.centerLeft,
-                color: Colors.transparent,
-                child: Wrap(
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+            child: Stack(
+          children: [
+            ListView(children: [
+              Center(
+                child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          if (selectedMeetings.contains(0)) {
-                            selectedMeetings.remove(0);
-                          } else {
-                            selectedMeetings.add(0);
-                          }
-                          setState(() {});
-                        },
-                        child: Text('Unternehmensführung'),
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: selectedMeetings.contains(0)
-                              ? Color.fromRGBO(211, 211, 211, 0.5)
-                              : Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 20),
+                          child: Column(
+                            children: [
+                              Text("BUDDY",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          const Color.fromRGBO(229, 36, 39, 1),
+                                      fontSize: 30,
+                                      letterSpacing: size.width * 0.02),
+                                  textAlign: TextAlign.left),
+                              Text(
+                                "Profil erstellen",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                    fontSize: 15,
+                                    letterSpacing: size.width * 0.01),
+                                // textAlign: TextAlign.left
+                              ),
+                            ],
                           ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 20),
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Image.asset("assets/f_logo.png",
+                                    width: size.width * 0.3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    UserImage(
+                      onFileChanged: (profileImg) {
+                        setState(() {});
+                        this.profileImg = profileImg;
+                      },
+                      name: widget.userInfoMap["name"],
+                      userid: widget.userInfoMap["userid"],
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.1,
+                          vertical: size.height * 0.01),
+                      child: TextFormField(
+                        maxLength: 18,
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                          counterText: usernameController.text.length < 10
+                              ? ''
+                              : '${usernameController.text.length}/18',
+                          labelText: "Nutzername",
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: BorderSide(),
+                          ),
+                          //fillColor: Colors.green
+                        ),
+                        style: TextStyle(
+                          fontFamily: "Poppins",
                         ),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          if (selectedMeetings.contains(1)) {
-                            selectedMeetings.remove(1);
-                          } else {
-                            selectedMeetings.add(1);
-                          }
-                          setState(() {});
-                        },
-                        child: Text('Treffen'),
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: selectedMeetings.contains(1)
-                              ? Color.fromRGBO(211, 211, 211, 0.5)
-                              : Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.1,
+                          vertical: size.height * 0.01),
+                      child: TextFormField(
+                          maxLength: 30,
+                          controller: companyController,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          decoration: InputDecoration(
+                            counterText: companyController.text.length < 20
+                                ? ''
+                                : '${companyController.text.length}/30',
+                            labelText: "Unternehmen",
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide(),
+                            ),
+                            //fillColor: Colors.green
                           ),
-                        ),
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                          )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.1,
+                          vertical: size.height * 0.01),
+                      child: Wrap(
+                        spacing: 8.0, // gap between adjacent chips
+                        runSpacing: 10.0, // gap between lines
+                        children: [
+                          Container(
+                            width: size.width * 0.39,
+                            child: TextFormField(
+                                maxLength: 30,
+                                controller: experienceController1,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                decoration: InputDecoration(
+                                  counterText: experienceController1.text.length <
+                                          20
+                                      ? ''
+                                      : '${experienceController1.text.length}/30',
+                                  labelText: "Erfahrungen",
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
+                                  ),
+                                  //fillColor: Colors.green
+                                ),
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                )),
+                          ),
+                          Container(
+                            width: size.width * 0.39,
+                            child: TextFormField(
+                                maxLength: 30,
+                                controller: experienceController2,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                decoration: InputDecoration(
+                                  counterText: experienceController2.text.length <
+                                          20
+                                      ? ''
+                                      : '${experienceController2.text.length}/30',
+                                  labelText: "Erfahrungen",
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
+                                  ),
+                                  //fillColor: Colors.green
+                                ),
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                )),
+                          ),
+                          Container(
+                            width: size.width * 0.39,
+                            child: TextFormField(
+                                maxLength: 30,
+                                controller: experienceController3,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                decoration: InputDecoration(
+                                  counterText: experienceController3.text.length <
+                                          20
+                                      ? ''
+                                      : '${experienceController3.text.length}/30',
+                                  labelText: "Erfahrungen",
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
+                                  ),
+                                  //fillColor: Colors.green
+                                ),
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                )),
+                          ),
+                          Container(
+                            width: size.width * 0.39,
+                            child: TextFormField(
+                                maxLength: 30,
+                                controller: experienceController4,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                decoration: InputDecoration(
+                                  counterText: experienceController4.text.length <
+                                          20
+                                      ? ''
+                                      : '${experienceController4.text.length}/30',
+                                  labelText: "Erfahrungen",
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
+                                  ),
+                                  //fillColor: Colors.green
+                                ),
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                )),
+                          )
+                        ],
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          if (selectedMeetings.contains(2)) {
-                            selectedMeetings.remove(2);
-                          } else {
-                            selectedMeetings.add(2);
-                          }
-                          setState(() {});
-                        },
-                        child: Text('Meet-Ups'),
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: selectedMeetings.contains(2)
-                              ? Color.fromRGBO(211, 211, 211, 0.5)
-                              : Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.1),
+                      alignment: Alignment.centerLeft,
+                      color: Colors.transparent,
+                      child: Wrap(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                if (selectedMeetings.contains(0)) {
+                                  selectedMeetings.remove(0);
+                                } else {
+                                  selectedMeetings.add(0);
+                                }
+                                setState(() {});
+                              },
+                              child: Text('Unternehmensführung'),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: selectedMeetings.contains(0)
+                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    : Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                if (selectedMeetings.contains(1)) {
+                                  selectedMeetings.remove(1);
+                                } else {
+                                  selectedMeetings.add(1);
+                                }
+                                setState(() {});
+                              },
+                              child: Text('Treffen'),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: selectedMeetings.contains(1)
+                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    : Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                if (selectedMeetings.contains(2)) {
+                                  selectedMeetings.remove(2);
+                                } else {
+                                  selectedMeetings.add(2);
+                                }
+                                setState(() {});
+                              },
+                              child: Text('Meet-Ups'),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: selectedMeetings.contains(2)
+                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    : Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      margin:
+                          EdgeInsets.only(top: size.height * 0.04, bottom: 300),
+                      child: RaisedButton(
+                        onPressed: () {
+                          DateTime now = new DateTime.now();
+                          SharedPreferencesHelper()
+                              .saveUserName(usernameController.text);
+                          SharedPreferencesHelper().saveUserStartDate(now);
+                          SharedPreferencesHelper()
+                              .saveUserCompany(companyController.text);
+                          SharedPreferencesHelper().saveUserGuide(
+                              selectedMeetings.contains(0) ? "true" : "false");
+                          SharedPreferencesHelper().saveUserMeet(
+                              selectedMeetings.contains(1) ? "true" : "false");
+                          SharedPreferencesHelper().saveUserMeetUp(
+                              selectedMeetings.contains(2) ? "true" : "false");
+                          SharedPreferencesHelper().saveUserSkills(
+                              experienceController1.text +
+                                  "|" +
+                                  experienceController2.text +
+                                  "|" +
+                                  experienceController3.text +
+                                  "|" +
+                                  experienceController4.text);
+                          Map<String, dynamic> addInformation = {
+                            "username": usernameController.text,
+                            "startDate": now,
+                            "company": companyController.text,
+                            "skills": experienceController1.text +
+                                "|" +
+                                experienceController2.text +
+                                "|" +
+                                experienceController3.text +
+                                "|" +
+                                experienceController4.text,
+                            "guide":
+                                selectedMeetings.contains(0) ? "true" : "false",
+                            "meet":
+                                selectedMeetings.contains(1) ? "true" : "false",
+                            "official_meet":
+                                selectedMeetings.contains(2) ? "true" : "false"
+                          };
+                          widget.userInfoMap.addAll(addInformation);
+                          DataBaseMethods().addUserInfoToDB(
+                              widget.userInfoMap["userid"], widget.userInfoMap);
+
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Home()));
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(60.0)),
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: size.height * 0.07,
+                          width: size.width * 0.5,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(60.0),
+                              gradient: const LinearGradient(colors: [
+                                Color.fromARGB(255, 255, 136, 34),
+                                Color.fromARGB(255, 255, 177, 41)
+                              ])
+                              // LinearGradient
+                              ),
+                          // BoxDecoration
+                          padding: const EdgeInsets.all(0),
+                          child: const Text(
+                            "Registrieren",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold), // TextStyle
+                          ), // Text
+                        ), // Container
+                      ), // RaisedButton
                     )
                   ],
                 ),
               ),
-
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(top: size.height * 0.04, bottom: 300),
-                child: RaisedButton(
-                  onPressed: () {
-                    DateTime now = new DateTime.now();
-                    SharedPreferencesHelper()
-                        .saveUserName(usernameController.text);
-                    SharedPreferencesHelper().saveUserStartDate(now);
-                    SharedPreferencesHelper()
-                        .saveUserCompany(companyController.text);
-                    SharedPreferencesHelper().saveUserGuide(
-                        selectedMeetings.contains(0) ? "true" : "false");
-                    SharedPreferencesHelper().saveUserMeet(
-                        selectedMeetings.contains(1) ? "true" : "false");
-                    SharedPreferencesHelper().saveUserMeetUp(
-                        selectedMeetings.contains(2) ? "true" : "false");
-                    SharedPreferencesHelper()
-                        .saveUserSkills(experienceController.text);
-                    Map<String, dynamic> addInformation = {
-                      "username": usernameController.text,
-                      "startDate": now,
-                      "company": companyController.text,
-                      "skills": experienceController.text,
-                      "guide": selectedMeetings.contains(0) ? "true" : "false",
-                      "meet": selectedMeetings.contains(1) ? "true" : "false",
-                      "official_meet":
-                          selectedMeetings.contains(2) ? "true" : "false"
-                    };
-                    widget.userInfoMap.addAll(addInformation);
-                    DataBaseMethods().addUserInfoToDB(
-                        widget.userInfoMap["userid"], widget.userInfoMap);
-
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Home()));
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(60.0)),
-                  textColor: Colors.white,
-                  padding: const EdgeInsets.all(0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: size.height * 0.07,
-                    width: size.width * 0.5,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60.0),
-                        gradient: const LinearGradient(colors: [
-                          Color.fromARGB(255, 255, 136, 34),
-                          Color.fromARGB(255, 255, 177, 41)
-                        ])
-                        // LinearGradient
-                        ),
-                    // BoxDecoration
-                    padding: const EdgeInsets.all(0),
-                    child: const Text(
-                      "Registrieren",
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold), // TextStyle
-                    ), // Text
-                  ), // Container
-                ), // RaisedButton
-              ) // Container
-            ],
-          ),
-        ]),
-      ),
-    );
+            ]),
+            /*Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset("assets/bottom2.png", width: size.width),
+            ),
+             */
+          ],
+        )));
   }
 }
 
@@ -328,7 +458,7 @@ class _UserImageState extends State<UserImage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       margin: EdgeInsets.symmetric(
           horizontal: size.width * 0.09, vertical: size.width * 0.05),
       child: Column(children: [

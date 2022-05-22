@@ -15,8 +15,10 @@ class SharedPreferencesHelper{
   static String userMeetKey = "USERMEETKEY";
   static String userMeetUpKey = "USERMEETUPKEY";
   static String userSkillsKey = "USERSKILLSKEY";
+  static String userAccountIdKey = "USERACCOUNTIDKEY";
 
-  
+
+
   Future<bool> saveUserName(String userName) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.setString(userNameKey, userName);
@@ -66,6 +68,11 @@ class SharedPreferencesHelper{
   Future<bool> saveUserSkills(String userSkills) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.setString(userSkillsKey, userSkills);
+  }
+
+  Future<bool> saveAccountId(String accountId) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userAccountIdKey, accountId);
   }
 
   //getData
@@ -119,5 +126,12 @@ class SharedPreferencesHelper{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(userSkillsKey);
   }
+
+  Future<String?> getUserAccountId() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userAccountIdKey);
+  }
+
+
   
 }

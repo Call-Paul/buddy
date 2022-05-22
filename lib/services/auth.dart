@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
-import 'package:buddy/screens/createProfile.dart';
 import 'package:buddy/screens/home.dart';
 import 'package:buddy/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
+import '../screens/createProfile.dart';
 
 class AuthMethods {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -43,12 +44,14 @@ class AuthMethods {
           .saveUserDisplayName(userDetails.displayName!);
       SharedPreferencesHelper().saveUserEmail(userDetails.email!);
       SharedPreferencesHelper().saveUserId(uuid);
+      SharedPreferencesHelper().saveAccountId(userDetails.uid!);
 
 
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,
         "name": userDetails.displayName,
-        "userid": uuid
+        "userid": uuid,
+        "accountid": userDetails.uid
       };
 
       Navigator.pushReplacement(context,

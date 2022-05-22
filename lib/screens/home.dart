@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:buddy/screens/chatOverview.dart';
 import 'package:buddy/screens/helperScreens/navdrawer.dart';
 import 'package:buddy/screens/map.dart';
-import 'package:buddy/screens/sign_in.dart';
+import 'package:buddy/screens/signIn.dart';
 import 'package:buddy/services/auth.dart';
 import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

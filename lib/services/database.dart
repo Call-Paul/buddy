@@ -1,9 +1,22 @@
 import 'dart:developer';
 import 'package:uuid/uuid.dart';
-
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DataBaseMethods {
+  Future<bool> checkIfAccountExists(String accountId) async {
+    bool result = false;
+    final userRef = FirebaseFirestore.instance.collection('users');
+    await userRef.get().then((snapshot) {
+      snapshot.docs.forEach((doc) {
+        if(doc.get("userid").toString() == accountId){
+          result = true;
+        }
+      });
+    });
+    return result;
+  }
+
   Future addUserInfoToDB(
       String userId, Map<String, dynamic> userInfoMap) async {
     log("DB: AddUser");
@@ -45,8 +58,8 @@ class DataBaseMethods {
         .update(lastMessageInfo);
   }
 
-  createChatRoom(Map<String, dynamic> chatRoomInfoMap,
-      String myUserId, String partnerUserId) async {
+  createChatRoom(Map<String, dynamic> chatRoomInfoMap, String myUserId,
+      String partnerUserId) async {
     log("DB: createChatRoom");
     var uuidGenerator = const Uuid();
     var uuid = uuidGenerator.v4();
@@ -62,7 +75,8 @@ class DataBaseMethods {
           .collection("users")
           .doc(myUserId)
           .collection("chats")
-          .doc(uuid).set(chatRoomInfoMap);
+          .doc(uuid)
+          .set(chatRoomInfoMap);
       FirebaseFirestore.instance
           .collection("users")
           .doc(partnerUserId)

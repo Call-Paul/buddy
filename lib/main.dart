@@ -1,5 +1,5 @@
 import 'package:buddy/screens/home.dart';
-import 'package:buddy/screens/sign_in.dart';
+import 'package:buddy/screens/signIn.dart';
 import 'package:buddy/services/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
