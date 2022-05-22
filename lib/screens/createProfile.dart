@@ -241,7 +241,12 @@ class _CreateProfile extends State<CreateProfile> {
                     SharedPreferencesHelper()
                         .saveUserName(usernameController.text);
                     Map<String, dynamic> addInformation = {
-                      "username": usernameController.text
+                      "username": usernameController.text,
+                      "company": companyController.text,
+                      "experience": experienceController.text,
+                      "guide": selectedMeetings.contains(0) ? "true": "false",
+                      "meet": selectedMeetings.contains(1) ? "true": "false",
+                      "official_meet": selectedMeetings.contains(2) ? "true": "false"
                     };
                     widget.userInfoMap.addAll(addInformation);
                     DataBaseMethods().addUserInfoToDB(

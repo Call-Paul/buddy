@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              color: Color.fromRGBO(18, 110, 194, 1),
+              color: const Color.fromRGBO(18, 110, 194, 1),
               icon: const Icon(
                 Icons.menu,
                 size: 30,
@@ -73,9 +73,54 @@ class _HomeState extends State<Home> {
   Widget buildHome(BuildContext context) {
     return Container(
       child: Center(
-        child: Text("HOME"),
-      ),
+          child: ListView(
+        children: [
+          buildBucket(context),
+          buildBucket(context),
+          buildBucket(context),
+          buildBucket(context),
+          buildBucket(context),
+          buildBucket(context),
+        ],
+      )),
     );
+  }
+
+  Widget buildBucket(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        height: 400,
+        decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.amber,
+            ),
+            borderRadius: const BorderRadius.all(const Radius.circular(20))),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topRight: const Radius.circular(20),
+                  topLeft: const Radius.circular(20)),
+              child: Image.asset(
+                "assets/otto.png",
+                height: 200.0,
+                width: double.infinity,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: const Text(
+                  "Die Otto (GmbH & Co KG) (früher Otto Versand (GmbH & Co), auch Otto Group) ist ein deutsches Handels- und Dienstleistungsunternehmen mit Sitz in Hamburg, das weltweit mit rund 52.000 Mitarbeitern agiert und in den Unternehmensbereichen Einzelhandel, Finanzierung und Logistik sowie Versandhandel aktiv ist.",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'SansSerif',
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ))
+          ],
+        ));
   }
 
   SafeArea buildMyNavBar(BuildContext context) {

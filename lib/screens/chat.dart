@@ -26,7 +26,7 @@ class _ChatState extends State<Chat> {
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-    chatRoomId = getChatRoomIdByUsernames(widget.username, myUserName);
+    //chatRoomId = getChatRoomIdByUsernames(widget.username, myUserName);
   }
 
   getChatRoomIdByUsernames(String userA, String userB) {
@@ -84,7 +84,7 @@ class _ChatState extends State<Chat> {
   }
 
   getAndSetMessages() async {
-    messageStream = await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
+    //messageStream = await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
     setState(() {});
   }
 

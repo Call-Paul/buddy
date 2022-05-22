@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:uuid/uuid.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -44,35 +45,44 @@ class DataBaseMethods {
         .update(lastMessageInfo);
   }
 
-  createChatRoom(String chatRoomId, Map<String, dynamic> chatRoomInfoMap,
-      String myUserId) async {
+  createChatRoom(Map<String, dynamic> chatRoomInfoMap,
+      String myUserId, String partnerUserId) async {
     log("DB: createChatRoom");
+    var uuidGenerator = const Uuid();
+    var uuid = uuidGenerator.v4();
     final snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(myUserId)
-        .collection("chats")
-        .doc(chatRoomId)
+        .collection("chatrooms")
+        .doc(uuid)
         .get();
     if (snapshot.exists) {
       return true;
     } else {
-      return FirebaseFirestore.instance
+      //Add Chat to both users
+      FirebaseFirestore.instance
           .collection("users")
           .doc(myUserId)
           .collection("chats")
-          .doc(chatRoomId)
+          .doc(uuid).set(chatRoomInfoMap);
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(partnerUserId)
+          .collection("chats")
+          .doc(uuid);
+      return FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(uuid)
           .set(chatRoomInfoMap);
     }
   }
 
   Future<Stream<QuerySnapshot>> getChatRoomMessages(
       String chatRoomId, String myUserId) async {
-    log("getChatRoomMessages");
     return FirebaseFirestore.instance
         .collection("users")
         .doc(myUserId)
         .collection("chats")
-        .doc(chatRoomId).collection("messages")
+        .doc(chatRoomId)
+        .collection("messages")
         .orderBy("timeStamp", descending: true)
         .snapshots();
   }

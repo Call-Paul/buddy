@@ -102,23 +102,22 @@ class _ChatOverview extends State<ChatOverview> {
             DocumentSnapshot ds =
             (snapshot.data! as QuerySnapshot).docs[index];
             return searchListUser(
-                ds["name"], ds["email"], ds["username"]);
+                ds["name"], ds["email"], ds["username"], ds["userid"]);
           },
         )
             : const Center(child: CircularProgressIndicator());
       },
     );
   }
-  Widget searchListUser(String name, String email, String username) {
+  Widget searchListUser(String name, String email, String partnerUsername, String partnerUserId) {
     return GestureDetector(
       onTap: () {
-        var chatRoomId = getChatRoomIdByUsernames(myUserName, username);
         Map<String, dynamic> chatRoomInfoMap = {
-          "users": [myUserName, username]
+          "users": [myUserName, partnerUsername]
         };
-        DataBaseMethods().createChatRoom(chatRoomId, chatRoomInfoMap, myUserId);
+        DataBaseMethods().createChatRoom( chatRoomInfoMap, myUserId, partnerUserId);
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Chat(username, name)));
+            MaterialPageRoute(builder: (context) => Chat(partnerUsername, name)));
       },
       child: Row(
         children: [

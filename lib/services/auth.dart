@@ -36,7 +36,6 @@ class AuthMethods {
     User? userDetails = result.user;
 
     if (userDetails != null) {
-      print(userDetails.displayName);
       await SharedPreferencesHelper()
           .saveUserDisplayName(userDetails.displayName!);
       SharedPreferencesHelper().saveUserEmailKey(userDetails.email!);
