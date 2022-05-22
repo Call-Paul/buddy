@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthMethods {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -36,16 +37,18 @@ class AuthMethods {
     User? userDetails = result.user;
 
     if (userDetails != null) {
+      var uuidGenerator = const Uuid();
+      var uuid = uuidGenerator.v4();
       await SharedPreferencesHelper()
           .saveUserDisplayName(userDetails.displayName!);
-      SharedPreferencesHelper().saveUserEmailKey(userDetails.email!);
-      SharedPreferencesHelper().saveUserIdKey(userDetails.uid);
+      SharedPreferencesHelper().saveUserEmail(userDetails.email!);
+      SharedPreferencesHelper().saveUserId(uuid);
 
 
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,
         "name": userDetails.displayName,
-        "userid": userDetails.uid
+        "userid": uuid
       };
 
       Navigator.pushReplacement(context,

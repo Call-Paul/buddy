@@ -28,21 +28,24 @@ class _CreateProfile extends State<CreateProfile> {
   TextEditingController experienceController = TextEditingController();
   List selectedMeetings = [];
 
-
   @override
   Widget build(BuildContext context) {
-    companyController.addListener(() {setState(() {});});
-    usernameController.addListener(() {setState(() {});});
-    experienceController.addListener(() {setState(() {});});
+    companyController.addListener(() {
+      setState(() {});
+    });
+    usernameController.addListener(() {
+      setState(() {});
+    });
+    experienceController.addListener(() {
+      setState(() {});
+    });
 
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SigInBackground(
         child:
-        ListView(physics: const NeverScrollableScrollPhysics(), children: [
+            ListView(physics: const NeverScrollableScrollPhysics(), children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -238,15 +241,29 @@ class _CreateProfile extends State<CreateProfile> {
                 margin: EdgeInsets.only(top: size.height * 0.04, bottom: 300),
                 child: RaisedButton(
                   onPressed: () {
+                    DateTime now = new DateTime.now();
                     SharedPreferencesHelper()
                         .saveUserName(usernameController.text);
+                    SharedPreferencesHelper().saveUserStartDate(now);
+                    SharedPreferencesHelper()
+                        .saveUserCompany(companyController.text);
+                    SharedPreferencesHelper().saveUserGuide(
+                        selectedMeetings.contains(0) ? "true" : "false");
+                    SharedPreferencesHelper().saveUserMeet(
+                        selectedMeetings.contains(1) ? "true" : "false");
+                    SharedPreferencesHelper().saveUserMeetUp(
+                        selectedMeetings.contains(2) ? "true" : "false");
+                    SharedPreferencesHelper()
+                        .saveUserSkills(experienceController.text);
                     Map<String, dynamic> addInformation = {
                       "username": usernameController.text,
+                      "startDate": now,
                       "company": companyController.text,
-                      "experience": experienceController.text,
-                      "guide": selectedMeetings.contains(0) ? "true": "false",
-                      "meet": selectedMeetings.contains(1) ? "true": "false",
-                      "official_meet": selectedMeetings.contains(2) ? "true": "false"
+                      "skills": experienceController.text,
+                      "guide": selectedMeetings.contains(0) ? "true" : "false",
+                      "meet": selectedMeetings.contains(1) ? "true" : "false",
+                      "official_meet":
+                          selectedMeetings.contains(2) ? "true" : "false"
                     };
                     widget.userInfoMap.addAll(addInformation);
                     DataBaseMethods().addUserInfoToDB(
@@ -269,15 +286,15 @@ class _CreateProfile extends State<CreateProfile> {
                           Color.fromARGB(255, 255, 136, 34),
                           Color.fromARGB(255, 255, 177, 41)
                         ])
-                      // LinearGradient
-                    ),
+                        // LinearGradient
+                        ),
                     // BoxDecoration
                     padding: const EdgeInsets.all(0),
                     child: const Text(
                       "Registrieren",
                       textAlign: TextAlign.center,
                       style:
-                      TextStyle(fontWeight: FontWeight.bold), // TextStyle
+                          TextStyle(fontWeight: FontWeight.bold), // TextStyle
                     ), // Text
                   ), // Container
                 ), // RaisedButton
@@ -309,9 +326,7 @@ class _UserImageState extends State<UserImage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     return Container(
       alignment: Alignment.centerLeft,
       margin: EdgeInsets.symmetric(
@@ -363,9 +378,7 @@ class _UserImageState extends State<UserImage> {
                     children: [
                       CircleAvatar(
                           backgroundColor: Colors.black87,
-                          backgroundImage: Image
-                              .network(profileImg!)
-                              .image),
+                          backgroundImage: Image.network(profileImg!).image),
                       Positioned(
                           bottom: 0,
                           right: -35,
@@ -391,47 +404,45 @@ class _UserImageState extends State<UserImage> {
   Future _selectPhoto() async {
     await showModalBottomSheet(
         context: context,
-        builder: (context) =>
-            BottomSheet(
-              builder: (context) =>
-                  Wrap(
+        builder: (context) => BottomSheet(
+              builder: (context) => Wrap(
+                children: [
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.camera),
-                            title: const Text("Kamara"),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              pickImage(ImageSource.camera);
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.browse_gallery),
-                            title: const Text("Gallerie"),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              pickImage(ImageSource.gallery);
-                            },
-                          )
-                        ],
+                      ListTile(
+                        leading: const Icon(Icons.camera),
+                        title: const Text("Kamara"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          pickImage(ImageSource.camera);
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.browse_gallery),
+                        title: const Text("Gallerie"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          pickImage(ImageSource.gallery);
+                        },
                       )
                     ],
-                  ),
+                  )
+                ],
+              ),
               onClosing: () {},
             ));
   }
 
   Future pickImage(ImageSource source) async {
     final pickedFile =
-    await imagePicker.pickImage(source: source, imageQuality: 50);
+        await imagePicker.pickImage(source: source, imageQuality: 50);
     if (pickedFile == null) {
       return;
     }
 
     final File? imageFile = File(pickedFile.path);
     final storage = FirebaseStorage.instanceFor(
-        bucket: "gs://crossinnovationclass2022.appspot.com")
+            bucket: "gs://crossinnovationclass2022.appspot.com")
         .ref();
 
     var storageRef = storage.child("user/profile/${widget.userid}");

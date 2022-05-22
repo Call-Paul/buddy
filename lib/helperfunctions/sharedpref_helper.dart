@@ -5,12 +5,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPreferencesHelper{
 
 
-  static String userIdKey = "USERKEY";
+  static String userIdKey = "USERIDKEY";
   static String userNameKey = "USERNAMEKEY";
-  static String userDisplayNameKey = "USERDISPLAYKEY";
+  static String userDisplayNameKey = "USERDISPLAYNAMEKEY";
   static String userEmailKey = "USEREMAILKEY";
-  static String userProfileKey = "USERPROFILEKEY";
+  static String userStartDateKey = "USERSTARTDATEKEY";
+  static String userCompanyKey = "USERCOMPANYKEY";
+  static String userGuideKey = "USERGUIDEKEY";
+  static String userMeetKey = "USERMEETKEY";
+  static String userMeetUpKey = "USERMEETUPKEY";
+  static String userSkillsKey = "USERSKILLSKEY";
 
+  
   Future<bool> saveUserName(String userName) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.setString(userNameKey, userName);
@@ -21,19 +27,45 @@ class SharedPreferencesHelper{
     return preferences.setString(userDisplayNameKey, userDisplayName);
   }
 
-  Future<bool> saveUserEmailKey(String userEmail) async{
+  Future<bool> saveUserEmail(String userEmail) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.setString(userEmailKey, userEmail);
   }
+  
 
-  Future<bool> saveUserProfileKey(String userProfile) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.setString(userProfileKey, userProfile);
-  }
-
-  Future<bool> saveUserIdKey(String userId) async{
+  Future<bool> saveUserId(String userId) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.setString(userIdKey, userId);
+  }
+
+  Future<bool> saveUserStartDate(DateTime startDate) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userStartDateKey, startDate.toString());
+  }
+
+  Future<bool> saveUserCompany(String userCompany) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userCompanyKey, userCompany);
+  }
+
+  Future<bool> saveUserGuide(String userGuide) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userGuideKey, userGuide);
+  }
+
+  Future<bool> saveUserMeet(String userCoffee) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userMeetKey, userCoffee);
+  }
+
+  Future<bool> saveUserMeetUp(String userMeetUp) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userMeetUpKey, userMeetUp);
+  }
+
+  Future<bool> saveUserSkills(String userSkills) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.setString(userSkillsKey, userSkills);
   }
 
   //getData
@@ -51,14 +83,41 @@ class SharedPreferencesHelper{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(userDisplayNameKey);
   }
-
-  Future<String?> getUserProfile() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(userProfileKey);
-  }
+  
 
   Future<String?> getUserEmail() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(userEmailKey);
   }
+
+  Future<DateTime?> getUserStartDate() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return DateTime.parse(preferences.getString(userStartDateKey)!);
+  }
+
+  Future<String?> getUserCompany() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userCompanyKey);
+  }
+
+  Future<String?> getUserGuide() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userGuideKey);
+  }
+
+  Future<String?> getUserCoffee() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userMeetKey);
+  }
+
+  Future<String?> getUserMeetUp() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userMeetUpKey);
+  }
+
+  Future<String?> getUserSkills() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(userSkillsKey);
+  }
+  
 }
