@@ -115,7 +115,7 @@ class _ChatOverview extends State<ChatOverview> {
         Map<String, dynamic> chatRoomInfoMap = {
           "users": [myUserName, partnerUsername]
         };
-        DataBaseMethods().createChatRoom( chatRoomInfoMap, myUserId, partnerUserId);
+        //DataBaseMethods().createChatRoom( chatRoomInfoMap, myUserId, partnerUserId);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => Chat(partnerUsername, name)));
       },
@@ -137,9 +137,6 @@ class _ChatOverview extends State<ChatOverview> {
 
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
-    print(myName);
-    print(await SharedPreferencesHelper().getUserStartDate());
-
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;

@@ -16,7 +16,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  late String chatRoomId;
+  String chatRoomId = "";
   Stream messageStream = const Stream.empty();
   late String myName, myUserName, myEmail, myUserId;
   TextEditingController messageTextEditingController = TextEditingController();
@@ -26,17 +26,11 @@ class _ChatState extends State<Chat> {
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-    //chatRoomId = getChatRoomIdByUsernames(widget.username, myUserName);
+    chatRoomId =  await DataBaseMethods().getChatRoomIdByUsernames(widget.username, myUserName, myUserId);
+    print(chatRoomId);
   }
 
-  getChatRoomIdByUsernames(String userA, String userB) {
-    if (userA.substring(0, 1).codeUnitAt(0) >
-        userB.substring(0, 1).codeUnitAt(0)) {
-      return "$userB\_$userA";
-    } else {
-      return "$userA\_$userB";
-    }
-  }
+
 
   Widget chatMessage(String message, bool sendByMe) {
     return Row(
@@ -100,14 +94,14 @@ class _ChatState extends State<Chat> {
         "timeStamp": timeStamp
       };
 
-      DataBaseMethods().addMessage(chatRoomId, messageInfoMap, myUserId).then((value) {
+      DataBaseMethods().addMessage(chatRoomId, messageInfoMap).then((value) {
         Map<String, dynamic> lastMessageInfoMap = {
           "lastMessage": message,
           "lastMessageSendTs": timeStamp,
           "lastMessageSendBy": myUserName
         };
 
-        DataBaseMethods().updateLastMessageSend(chatRoomId, lastMessageInfoMap, myUserId);
+        //DataBaseMethods().updateLastMessageSend(chatRoomId, lastMessageInfoMap, myUserId);
       });
     }
   }

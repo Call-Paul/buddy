@@ -9,7 +9,7 @@ class DataBaseMethods {
     final userRef = FirebaseFirestore.instance.collection('users');
     await userRef.get().then((snapshot) {
       snapshot.docs.forEach((doc) {
-        if(doc.get("accountid").toString() == accountId){
+        if (doc.get("accountid").toString() == accountId) {
           result = true;
         }
       });
@@ -34,13 +34,10 @@ class DataBaseMethods {
         .snapshots();
   }
 
-  Future addMessage(String chatRoomId, Map<String, dynamic> messageInfo,
-      String myUserId) async {
+  Future addMessage(String chatRoomId, Map<String, dynamic> messageInfo) async {
     log("DB: AddMessage");
     return FirebaseFirestore.instance
-        .collection("users")
-        .doc(myUserId)
-        .collection("chats")
+        .collection("chatrooms")
         .doc(chatRoomId)
         .collection("messages")
         .doc()
@@ -71,17 +68,18 @@ class DataBaseMethods {
       return true;
     } else {
       //Add Chat to both users
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("users")
           .doc(myUserId)
           .collection("chats")
           .doc(uuid)
           .set(chatRoomInfoMap);
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("users")
           .doc(partnerUserId)
           .collection("chats")
-          .doc(uuid);
+          .doc(uuid)
+          .set(chatRoomInfoMap);
       return FirebaseFirestore.instance
           .collection("chatrooms")
           .doc(uuid)
@@ -92,12 +90,41 @@ class DataBaseMethods {
   Future<Stream<QuerySnapshot>> getChatRoomMessages(
       String chatRoomId, String myUserId) async {
     return FirebaseFirestore.instance
-        .collection("users")
+        .collection("chatrooms")
         .doc(myUserId)
         .collection("chats")
         .doc(chatRoomId)
         .collection("messages")
         .orderBy("timeStamp", descending: true)
         .snapshots();
+  }
+
+  Future<String> getChatRoomIdByUsernames(
+      String username, String myUserName, String myUserId) async {
+    final userRef = FirebaseFirestore.instance.collection('users');
+    var result = "";
+    await userRef.get().then((snapshot) {
+      snapshot.docs.forEach((doc) async {
+        if (doc.get("userid").toString() == myUserId) {
+          final userRef = FirebaseFirestore.instance
+              .collection('users')
+              .doc(myUserId)
+              .collection("chats");
+          await userRef.get().then((snapshot) {
+            snapshot.docs.forEach((doc) async {
+              if ((doc.get("users")[0].toString() == myUserName &&
+                      doc.get("users")[1].toString() == username) ||
+                  (doc.get("users")[1].toString() == myUserName &&
+                      doc.get("users")[0].toString() == username)) {
+                 result = await doc.reference.id;
+                print(result);
+              }
+            });
+          });
+        }
+      });
+    });
+
+    return  result;
   }
 }
