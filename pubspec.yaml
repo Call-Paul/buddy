@@ -19,11 +19,13 @@ dependencies:
   cloud_firestore:
   image_picker:
   image_cropper:
+  material_dialogs:
 
   cupertino_icons: ^1.0.2
   readmore: ^2.1.0
   swipe_cards: ^1.0.0
   uuid: ^3.0.6
+  nfc_in_flutter: ^2.0.5
 
 dev_dependencies:
   flutter_test:

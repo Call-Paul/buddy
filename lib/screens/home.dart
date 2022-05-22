@@ -8,6 +8,7 @@ import 'package:buddy/services/auth.dart';
 import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
 import 'chat.dart';
@@ -19,6 +20,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int pageIndex = 0;
+
+  @override
+  void initState() {
+    Stream<NDEFMessage> stream = NFC.readNDEF();
+
+    stream.listen((NDEFMessage message) {
+      print("records: ${message.data}");
+    });
+
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {

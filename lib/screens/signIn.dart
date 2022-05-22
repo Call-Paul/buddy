@@ -1,12 +1,7 @@
-import 'package:buddy/screens/createProfile.dart';
 import 'package:buddy/services/auth.dart';
-import 'package:buddy/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'createProfile.dart';
 
 class SignIn extends StatefulWidget {
   @override

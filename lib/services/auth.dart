@@ -42,9 +42,9 @@ class AuthMethods {
       var uuid = uuidGenerator.v4();
       await SharedPreferencesHelper()
           .saveUserDisplayName(userDetails.displayName!);
-      SharedPreferencesHelper().saveUserEmail(userDetails.email!);
-      SharedPreferencesHelper().saveUserId(uuid);
-      SharedPreferencesHelper().saveAccountId(userDetails.uid!);
+      await SharedPreferencesHelper().saveUserEmail(userDetails.email!);
+      await SharedPreferencesHelper().saveUserId(uuid);
+      await SharedPreferencesHelper().saveAccountId(userDetails.uid);
 
       Map<String, dynamic> userInfoMap = {
         "email": userDetails.email,

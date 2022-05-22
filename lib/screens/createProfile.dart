@@ -9,6 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
+import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
 import '../services/database.dart';
 
@@ -178,7 +182,8 @@ class _CreateProfile extends State<CreateProfile> {
                                 maxLengthEnforcement:
                                     MaxLengthEnforcement.enforced,
                                 decoration: InputDecoration(
-                                  counterText: experienceController1.text.length <
+                                  counterText: experienceController1
+                                              .text.length <
                                           20
                                       ? ''
                                       : '${experienceController1.text.length}/30',
@@ -202,7 +207,8 @@ class _CreateProfile extends State<CreateProfile> {
                                 maxLengthEnforcement:
                                     MaxLengthEnforcement.enforced,
                                 decoration: InputDecoration(
-                                  counterText: experienceController2.text.length <
+                                  counterText: experienceController2
+                                              .text.length <
                                           20
                                       ? ''
                                       : '${experienceController2.text.length}/30',
@@ -226,7 +232,8 @@ class _CreateProfile extends State<CreateProfile> {
                                 maxLengthEnforcement:
                                     MaxLengthEnforcement.enforced,
                                 decoration: InputDecoration(
-                                  counterText: experienceController3.text.length <
+                                  counterText: experienceController3
+                                              .text.length <
                                           20
                                       ? ''
                                       : '${experienceController3.text.length}/30',
@@ -250,7 +257,8 @@ class _CreateProfile extends State<CreateProfile> {
                                 maxLengthEnforcement:
                                     MaxLengthEnforcement.enforced,
                                 decoration: InputDecoration(
-                                  counterText: experienceController4.text.length <
+                                  counterText: experienceController4
+                                              .text.length <
                                           20
                                       ? ''
                                       : '${experienceController4.text.length}/30',
@@ -350,20 +358,20 @@ class _CreateProfile extends State<CreateProfile> {
                       margin:
                           EdgeInsets.only(top: size.height * 0.04, bottom: 300),
                       child: RaisedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           DateTime now = new DateTime.now();
-                          SharedPreferencesHelper()
+                          await SharedPreferencesHelper()
                               .saveUserName(usernameController.text);
-                          SharedPreferencesHelper().saveUserStartDate(now);
-                          SharedPreferencesHelper()
+                          await SharedPreferencesHelper().saveUserStartDate(now);
+                          await SharedPreferencesHelper()
                               .saveUserCompany(companyController.text);
-                          SharedPreferencesHelper().saveUserGuide(
+                          await SharedPreferencesHelper().saveUserGuide(
                               selectedMeetings.contains(0) ? "true" : "false");
-                          SharedPreferencesHelper().saveUserMeet(
+                          await SharedPreferencesHelper().saveUserMeet(
                               selectedMeetings.contains(1) ? "true" : "false");
-                          SharedPreferencesHelper().saveUserMeetUp(
+                          await SharedPreferencesHelper().saveUserMeetUp(
                               selectedMeetings.contains(2) ? "true" : "false");
-                          SharedPreferencesHelper().saveUserSkills(
+                          await SharedPreferencesHelper().saveUserSkills(
                               experienceController1.text +
                                   "|" +
                                   experienceController2.text +
@@ -389,12 +397,53 @@ class _CreateProfile extends State<CreateProfile> {
                             "official_meet":
                                 selectedMeetings.contains(2) ? "true" : "false"
                           };
-                          widget.userInfoMap.addAll(addInformation);
-                          DataBaseMethods().addUserInfoToDB(
-                              widget.userInfoMap["userid"], widget.userInfoMap);
 
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (context) => Home()));
+                          Dialogs.bottomMaterialDialog(
+                              msg:
+                                  'Halte dein Handy jetzt in die Nähe deines Ankers um deinen Account mit deinem Anker zu verknüpfen. Falls du ihn gerade nicht in der Nähe hast, kannst du das später im Profil nachholen.',
+                              title: 'Anker verknüpfen',
+                              context: context,
+                              actions: [
+                                IconsOutlineButton(
+                                  onPressed: () {
+                                    DataBaseMethods()
+                                        .addUserInfoToDB(
+                                            widget.userInfoMap["userid"],
+                                            widget.userInfoMap)
+                                        .then((value) =>
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Home())));
+                                  },
+                                  text: 'Später machen',
+                                  iconData: Icons.cancel_outlined,
+                                  textStyle: TextStyle(color: Colors.grey),
+                                  iconColor: Colors.grey,
+                                ),
+                              ]);
+
+                          widget.userInfoMap.addAll(addInformation);
+                          List<NDEFRecord> messages =
+                              List.empty(growable: true);
+                          messages.add(
+                              NDEFRecord.plain(widget.userInfoMap["userid"]));
+
+                          NDEFMessage newMessage =
+                              NDEFMessage.withRecords(messages);
+                          Stream<NDEFTag> stream =
+                              NFC.writeNDEF(newMessage, once: true);
+
+                          stream.listen((NDEFTag tag) {
+                            DataBaseMethods()
+                                .addUserInfoToDB(widget.userInfoMap["userid"],
+                                    widget.userInfoMap)
+                                .then((value) => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Home())));
+                          });
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(60.0)),

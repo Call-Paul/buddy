@@ -137,6 +137,9 @@ class _ChatOverview extends State<ChatOverview> {
 
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
+    print(myName);
+    print(await SharedPreferencesHelper().getUserStartDate());
+
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
