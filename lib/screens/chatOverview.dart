@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,19 +7,15 @@ import '../services/database.dart';
 import 'chat.dart';
 
 class ChatOverview extends StatefulWidget {
-
   @override
   _ChatOverview createState() => _ChatOverview();
 }
-
-
 
 class _ChatOverview extends State<ChatOverview> {
   bool isSearching = false;
   TextEditingController searchEditingController = TextEditingController();
   Stream? usersStream;
   late String myName, myUserName, myEmail, myUserId;
-
 
   @override
   void initState() {
@@ -31,59 +26,58 @@ class _ChatOverview extends State<ChatOverview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              Row(children: [
-                isSearching
-                    ? Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: GestureDetector(
-                        onTap: () {
-                          isSearching = false;
-                          searchEditingController.clear();
-                          setState(() {});
-                        },
-                        child: const Icon(Icons.arrow_back)))
-                    : Container(),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 16),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.grey,
-                            width: 1.0,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(24)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: TextField(
-                              onChanged: (text) {
-                                if (text == "") {
-                                  isSearching = false;
-                                  searchEditingController.clear();
-                                  setState(() {});
-                                } else {
-                                  onSearchBtnClick();
-                                }
+        body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Row(children: [
+                  isSearching
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: GestureDetector(
+                              onTap: () {
+                                isSearching = false;
+                                searchEditingController.clear();
+                                setState(() {});
                               },
-                              controller: searchEditingController,
-                              decoration: const InputDecoration(
-                                  border: InputBorder.none, hintText: "Username"),
-                            )),
-                        GestureDetector(child: const Icon(Icons.search))
-                      ],
+                              child: const Icon(Icons.arrow_back)))
+                      : Container(),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(24)),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: TextField(
+                            onChanged: (text) {
+                              if (text == "") {
+                                isSearching = false;
+                                searchEditingController.clear();
+                                setState(() {});
+                              } else {
+                                onSearchBtnClick();
+                              }
+                            },
+                            controller: searchEditingController,
+                            decoration: const InputDecoration(
+                                border: InputBorder.none, hintText: "Username"),
+                          )),
+                          GestureDetector(child: const Icon(Icons.search))
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ]),
-              isSearching ? searchUsersList() : chatList()
-            ],
-          ))
-    );
+                ]),
+                isSearching ? searchUsersList() : chatList()
+              ],
+            )));
   }
 
   Widget chatList() {
@@ -96,28 +90,37 @@ class _ChatOverview extends State<ChatOverview> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-          itemCount: (snapshot.data! as QuerySnapshot).docs.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            DocumentSnapshot ds =
-            (snapshot.data! as QuerySnapshot).docs[index];
-            return searchListUser(
-                ds["name"], ds["email"], ds["username"], ds["userid"]);
-          },
-        )
+                itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds =
+                      (snapshot.data! as QuerySnapshot).docs[index];
+                  return searchListUser(
+                      ds["name"], ds["email"], ds["username"], ds["userid"]);
+                },
+              )
             : const Center(child: CircularProgressIndicator());
       },
     );
   }
-  Widget searchListUser(String name, String email, String partnerUsername, String partnerUserId) {
+
+  Widget searchListUser(
+      String name, String email, String partnerUsername, String partnerUserId) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         Map<String, dynamic> chatRoomInfoMap = {
           "users": [myUserName, partnerUsername]
         };
-        //DataBaseMethods().createChatRoom( chatRoomInfoMap, myUserId, partnerUserId);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Chat(partnerUsername, name)));
+        if (await DataBaseMethods().getChatRoomIdByUsernames(
+                partnerUsername, myUserName, myUserId) ==
+            "") {
+          DataBaseMethods()
+              .createChatRoom(chatRoomInfoMap, myUserId, partnerUserId);
+        }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Chat(partnerUsername, name)));
       },
       child: Row(
         children: [
@@ -151,11 +154,9 @@ class _ChatOverview extends State<ChatOverview> {
     }
   }
 
-
-
   onSearchBtnClick() async {
     usersStream =
-    await DataBaseMethods().getUserByUsername(searchEditingController.text);
+        await DataBaseMethods().getUserByUsername(searchEditingController.text);
     isSearching = true;
     setState(() {});
   }

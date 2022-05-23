@@ -54,9 +54,10 @@ class AuthMethods {
       };
 
       DataBaseMethods().checkIfAccountExists(userDetails.uid).then((value) => {
-            if (value)
+            if (value != "")
               {
-                Navigator.pushReplacement(
+          DataBaseMethods().saveUserInformationFromOnlineLocal(value),
+          Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Home()))
               }
             else

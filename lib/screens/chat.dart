@@ -26,33 +26,33 @@ class _ChatState extends State<Chat> {
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-    chatRoomId =  await DataBaseMethods().getChatRoomIdByUsernames(widget.username, myUserName, myUserId);
-    print(chatRoomId);
+    chatRoomId = await DataBaseMethods()
+        .getChatRoomIdByUsernames(widget.username, myUserName, myUserId);
   }
-
-
 
   Widget chatMessage(String message, bool sendByMe) {
     return Row(
-      mainAxisAlignment: sendByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24),
-            bottomRight: sendByMe? Radius.circular(0): Radius.circular(24),
-            topRight: Radius.circular(24),
-            bottomLeft:  sendByMe ? Radius.circular(24): Radius.circular(0)),
-            color: Colors.amberAccent),
-        padding: EdgeInsets.all(16),
-        child: Text(
-          message,
-          style: const TextStyle(color: Colors.black),
-        ),
-
-      ),
-    ]);
+        mainAxisAlignment:
+            sendByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    bottomRight:
+                        sendByMe ? Radius.circular(0) : Radius.circular(24),
+                    topRight: Radius.circular(24),
+                    bottomLeft:
+                        sendByMe ? Radius.circular(24) : Radius.circular(0)),
+                color: Colors.amberAccent),
+            padding: EdgeInsets.all(16),
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
+        ]);
   }
 
   Widget chatMessages() {
@@ -78,7 +78,7 @@ class _ChatState extends State<Chat> {
   }
 
   getAndSetMessages() async {
-    //messageStream = await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
+    messageStream = await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
     setState(() {});
   }
 
@@ -95,13 +95,6 @@ class _ChatState extends State<Chat> {
       };
 
       DataBaseMethods().addMessage(chatRoomId, messageInfoMap).then((value) {
-        Map<String, dynamic> lastMessageInfoMap = {
-          "lastMessage": message,
-          "lastMessageSendTs": timeStamp,
-          "lastMessageSendBy": myUserName
-        };
-
-        //DataBaseMethods().updateLastMessageSend(chatRoomId, lastMessageInfoMap, myUserId);
       });
     }
   }
