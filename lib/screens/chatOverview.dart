@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:buddy/screens/createProfile.dart';
+import 'package:buddy/services/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
 import '../services/database.dart';
@@ -17,11 +22,11 @@ class _ChatOverview extends State<ChatOverview> {
   Stream? usersStream;
   Stream? chatStream;
   late String myName, myUserName, myEmail, myUserId;
+  String profileImg = "";
 
   @override
   void initState() {
     getMyInfoFormSharedPreferences();
-    doThisOnLaunch();
     super.initState();
   }
 
@@ -82,7 +87,6 @@ class _ChatOverview extends State<ChatOverview> {
             )));
   }
 
-
   Widget searchUsersList() {
     return StreamBuilder(
       stream: usersStream,
@@ -137,55 +141,26 @@ class _ChatOverview extends State<ChatOverview> {
     );
   }
 
-
-
-
   Widget chatList() {
     return StreamBuilder(
       stream: chatStream,
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-          itemCount: (snapshot.data! as QuerySnapshot).docs.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            DocumentSnapshot ds =
-            (snapshot.data! as QuerySnapshot).docs[index];
-            print(ds.id);
-            return chat(
-                ds["users"][1]);
-          },
-        )
+                itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds =
+                      (snapshot.data! as QuerySnapshot).docs[index];
+                  return ChatWidget(
+                      myUserName: ds["users"][1],
+                      myUserId: myUserId,
+                      chatRoomId: ds.id);
+                },
+              )
             : const Center(child: CircularProgressIndicator());
       },
     );
-  }
-
-  Widget chat(
-      String name) {
-    return GestureDetector(
-      onTap: () async {
-
-
-      },
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(40),
-            child: const Icon(Icons.email),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(name)],
-          )
-        ],
-      ),
-    );
-  }
-
-  getAllChatsWithUsers() async{
-
   }
 
   getMyInfoFormSharedPreferences() async {
@@ -193,18 +168,8 @@ class _ChatOverview extends State<ChatOverview> {
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-
     chatStream = await DataBaseMethods().getAllChats(myUserId);
     setState(() {});
-  }
-
-  getChatRoomIdByUsernames(String userA, String userB) {
-    if (userA.substring(0, 1).codeUnitAt(0) >
-        userB.substring(0, 1).codeUnitAt(0)) {
-      return "$userB\_$userA";
-    } else {
-      return "$userA\_$userB";
-    }
   }
 
   onSearchBtnClick() async {
@@ -213,10 +178,132 @@ class _ChatOverview extends State<ChatOverview> {
     isSearching = true;
     setState(() {});
   }
+}
 
-  void doThisOnLaunch() async {
-    await getAllChatsWithUsers();
+class ChatWidget extends StatefulWidget {
+  String myUserName, myUserId, chatRoomId;
+
+  ChatWidget(
+      {required this.myUserName,
+      required this.myUserId,
+      required this.chatRoomId});
+
+  @override
+  _ChatState createState() => _ChatState();
+}
+
+class _ChatState extends State<ChatWidget> {
+  String? profileImg;
+  String lastMessage = "";
+
+  @override
+  void initState() {
+    getLastMessage();
+    super.initState();
   }
 
+  getLastMessage() async {
+    lastMessage = await DataBaseMethods()
+        .getLastMessageOfChatRoom(widget.chatRoomId, widget.chatRoomId);
+    setState(() {});
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {},
+      child: Row(
+        children: [
+          UserImage(
+              onFileChanged: (profileImg) {
+                setState(() {});
+                this.profileImg = profileImg;
+              },
+              name: widget.myUserName,
+              userid: widget.myUserId),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.myUserName),
+              Text(lastMessage)
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class UserImage extends StatefulWidget {
+  final Function(String profileImg) onFileChanged;
+
+  String userid, name;
+
+  UserImage(
+      {required this.onFileChanged, required this.name, required this.userid});
+
+  @override
+  _UserImageState createState() => _UserImageState();
+}
+
+class _UserImageState extends State<UserImage> {
+  String? profileImg;
+
+  @override
+  void initState() {
+    downloadImage();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Column(children: [
+        if (profileImg == null)
+          SizedBox(
+              height: 60,
+              width: 60,
+              child: Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.black87,
+                      child: Text(widget.name.substring(0, 1) +
+                          widget.name.substring(
+                              widget.name.lastIndexOf(' ') + 1,
+                              widget.name.lastIndexOf(' ') + 2)),
+                    ),
+                  ])),
+        if (profileImg != null)
+          InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: SizedBox(
+                height: 60,
+                width: 60,
+                child: Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      CircleAvatar(backgroundColor: Colors.black87,
+                      backgroundImage: Image.network(profileImg!).image),
+                    ])), // AppRoundImage.url
+          ),
+      ]),
+    );
+  }
+
+  Future downloadImage() async {
+    var downloadURL = await StorageMethods().getProfileImg(widget.userid);
+    if (downloadURL != "") {
+      setState(() {
+        profileImg = downloadURL;
+      });
+      widget.onFileChanged(profileImg!);
+    }
+  }
 }

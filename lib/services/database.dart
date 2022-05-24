@@ -97,6 +97,23 @@ class DataBaseMethods {
         .snapshots();
   }
 
+  Future<String> getLastMessageOfChatRoom(
+      String chatRoomId, String myUserId) async {
+        QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
+        .collection("chatrooms")
+        .doc(chatRoomId)
+        .collection("messages")
+        .orderBy("timeStamp", descending: true)
+        .limit(1).get();
+
+        String lastMessage = "";
+        if(result.docs.isNotEmpty) {
+          Map collection = result.docs.first.data();
+          lastMessage = collection["message"];
+        }
+        return lastMessage;
+  }
+
   Future<String> getChatRoomIdByUsernames(
       String partnerUsername, String myUserName, String myUserId) async {
     final QuerySnapshot result = await FirebaseFirestore.instance

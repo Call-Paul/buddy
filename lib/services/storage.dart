@@ -2,13 +2,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/src/widgets/image.dart';
 
 class StorageMethods {
   final storage = FirebaseStorage.instanceFor(
-      bucket: "gs://crossinnovationclass2022.appspot.com").ref();
+          bucket: "gs://crossinnovationclass2022.appspot.com")
+      .ref();
 
-  Future<String> uploadFile(String userId, File file) async{
+  Future<String> uploadFile(String userId, File file) async {
     var storageRef = storage.child("user/profile/$userId");
     await storageRef.putFile(file);
     var downloadURL = await storageRef.getDownloadURL();
@@ -16,9 +16,13 @@ class StorageMethods {
     return downloadURL;
   }
 
-  Future<String> getProfileImg(String userId) {
+  Future<String> getProfileImg(String userId) async {
     var storageRef = storage.child("user/profile/$userId");
-    return storageRef.getDownloadURL();
-
+    try {
+      var downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (err) {
+      return "";
+    }
   }
 }

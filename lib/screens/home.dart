@@ -199,12 +199,12 @@ class _HomeState extends State<Home> {
               },
               icon: pageIndex == 2
                   ? const Icon(
-                      Icons.widgets_rounded,
+                      Icons.chat_bubble,
                       color: Color(0xFF198BAA),
                       size: 35,
                     )
                   : const Icon(
-                      Icons.widgets_outlined,
+                      Icons.chat_bubble_outline_outlined,
                       color: Color(0xFF198BAA),
                       size: 35,
                     ),
