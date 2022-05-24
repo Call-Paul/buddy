@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/screens/home.dart';
+import 'package:buddy/services/storage.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -620,13 +621,7 @@ class _UserImageState extends State<UserImage> {
     }
 
     final File? imageFile = File(pickedFile.path);
-    final storage = FirebaseStorage.instanceFor(
-            bucket: "gs://crossinnovationclass2022.appspot.com")
-        .ref();
-
-    var storageRef = storage.child("user/profile/${widget.userid}");
-    await storageRef.putFile(imageFile!);
-    var downloadURL = await storageRef.getDownloadURL();
+    var downloadURL =  await StorageMethods().uploadFile(widget.userid, imageFile!);
 
     setState(() {
       profileImg = downloadURL;

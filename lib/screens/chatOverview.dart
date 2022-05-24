@@ -15,11 +15,13 @@ class _ChatOverview extends State<ChatOverview> {
   bool isSearching = false;
   TextEditingController searchEditingController = TextEditingController();
   Stream? usersStream;
+  Stream? chatStream;
   late String myName, myUserName, myEmail, myUserId;
 
   @override
   void initState() {
     getMyInfoFormSharedPreferences();
+    doThisOnLaunch();
     super.initState();
   }
 
@@ -80,9 +82,6 @@ class _ChatOverview extends State<ChatOverview> {
             )));
   }
 
-  Widget chatList() {
-    return Container();
-  }
 
   Widget searchUsersList() {
     return StreamBuilder(
@@ -138,11 +137,65 @@ class _ChatOverview extends State<ChatOverview> {
     );
   }
 
+
+
+
+  Widget chatList() {
+    return StreamBuilder(
+      stream: chatStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+          itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            DocumentSnapshot ds =
+            (snapshot.data! as QuerySnapshot).docs[index];
+            print(ds.id);
+            return chat(
+                ds["users"][1]);
+          },
+        )
+            : const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget chat(
+      String name) {
+    return GestureDetector(
+      onTap: () async {
+
+
+      },
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: const Icon(Icons.email),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text(name)],
+          )
+        ],
+      ),
+    );
+  }
+
+  getAllChatsWithUsers() async{
+
+  }
+
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
+
+    chatStream = await DataBaseMethods().getAllChats(myUserId);
+    setState(() {});
   }
 
   getChatRoomIdByUsernames(String userA, String userB) {
@@ -160,4 +213,10 @@ class _ChatOverview extends State<ChatOverview> {
     isSearching = true;
     setState(() {});
   }
+
+  void doThisOnLaunch() async {
+    await getAllChatsWithUsers();
+  }
+
+
 }

@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DataBaseMethods {
@@ -121,8 +120,7 @@ class DataBaseMethods {
     return documentId;
   }
 
-
-  saveUserInformationFromOnlineLocal(String userId) async{
+  saveUserInformationFromOnlineLocal(String userId) async {
     var collection = FirebaseFirestore.instance.collection('users');
     var docSnapshot = await collection.doc(userId).get();
     if (docSnapshot.exists) {
@@ -137,12 +135,19 @@ class DataBaseMethods {
       SharedPreferencesHelper().saveUserDisplayName(data["name"]);
       SharedPreferencesHelper().saveUserMeetUp(data["official_meet"]);
       SharedPreferencesHelper().saveUserSkills(data["skills"]);
-      SharedPreferencesHelper().saveUserStartDate(DateTime.parse(data["startDate"].toDate().toString()));
+      SharedPreferencesHelper().saveUserStartDate(
+          DateTime.parse(data["startDate"].toDate().toString()));
       SharedPreferencesHelper().saveUserId(data["userid"]);
       SharedPreferencesHelper().saveUserName(data["username"]);
-
-
-
     }
+  }
+
+  getAllChats(String myUserId) {
+    log("DB: GetAllChats");
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(myUserId)
+        .collection("chats")
+        .snapshots();
   }
 }
