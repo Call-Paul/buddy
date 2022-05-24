@@ -7,9 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
-  final String username, name;
+  final String partnerUsername;
 
-  Chat(this.username, this.name);
+  Chat(this.partnerUsername);
 
   @override
   _ChatState createState() => _ChatState();
@@ -27,7 +27,7 @@ class _ChatState extends State<Chat> {
     myEmail = (await SharedPreferencesHelper().getUserEmail())!;
     myUserId = (await SharedPreferencesHelper().getUserId())!;
     chatRoomId = await DataBaseMethods()
-        .getChatRoomIdByUsernames(widget.username, myUserName, myUserId);
+        .getChatRoomIdByUsernames(widget.partnerUsername, myUserName, myUserId);
   }
 
   Widget chatMessage(String message, bool sendByMe) {
@@ -113,7 +113,7 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.name)),
+      appBar: AppBar(title: Text(widget.partnerUsername)),
       body: Container(
           child: Stack(
         children: [

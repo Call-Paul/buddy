@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
 import '../services/database.dart';
@@ -22,7 +23,6 @@ class _ChatOverview extends State<ChatOverview> {
   Stream? usersStream;
   Stream? chatStream;
   late String myName, myUserName, myEmail, myUserId;
-  String profileImg = "";
 
   @override
   void initState() {
@@ -120,10 +120,8 @@ class _ChatOverview extends State<ChatOverview> {
           DataBaseMethods()
               .createChatRoom(chatRoomInfoMap, myUserId, partnerUserId);
         }
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Chat(partnerUsername, name)));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Chat(partnerUsername)));
       },
       child: Row(
         children: [
@@ -153,7 +151,9 @@ class _ChatOverview extends State<ChatOverview> {
                   DocumentSnapshot ds =
                       (snapshot.data! as QuerySnapshot).docs[index];
                   return ChatWidget(
-                      myUserName: ds["users"][1],
+                      partnerUsername: ds["users"][1] == myUserName
+                          ? ds["users"][0]
+                          : ds["users"][1],
                       myUserId: myUserId,
                       chatRoomId: ds.id);
                 },
@@ -181,10 +181,10 @@ class _ChatOverview extends State<ChatOverview> {
 }
 
 class ChatWidget extends StatefulWidget {
-  String myUserName, myUserId, chatRoomId;
+  String partnerUsername, myUserId, chatRoomId;
 
   ChatWidget(
-      {required this.myUserName,
+      {required this.partnerUsername,
       required this.myUserId,
       required this.chatRoomId});
 
@@ -195,6 +195,7 @@ class ChatWidget extends StatefulWidget {
 class _ChatState extends State<ChatWidget> {
   String? profileImg;
   String lastMessage = "";
+  String lastTimeStamp = "";
 
   @override
   void initState() {
@@ -203,32 +204,88 @@ class _ChatState extends State<ChatWidget> {
   }
 
   getLastMessage() async {
-    lastMessage = await DataBaseMethods()
-        .getLastMessageOfChatRoom(widget.chatRoomId, widget.chatRoomId);
+    Map<String, dynamic> lastInfo = await DataBaseMethods()
+        .getLastMessageOfChatRoom(widget.chatRoomId);
+    lastMessage = lastInfo["message"];
+    Timestamp t = lastInfo["time"];
+
+    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+    if (t.toDate().day == yesterday.day) {
+      lastTimeStamp = "Gestern";
+    } else {
+      var format = DateFormat('hh:mm a');
+      lastTimeStamp = format.format(t.toDate());
+    }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {},
+    return InkWell(
+      onTap: () async {
+        Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Chat(widget.partnerUsername)))
+            .then((value) => {getLastMessage(), setState(() {})});
+      },
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          UserImage(
-              onFileChanged: (profileImg) {
-                setState(() {});
-                this.profileImg = profileImg;
-              },
-              name: widget.myUserName,
-              userid: widget.myUserId),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              Text(widget.myUserName),
-              Text(lastMessage)
+              UserImage(
+                  onFileChanged: (profileImg) {
+                    setState(() {});
+                    this.profileImg = profileImg;
+                  },
+                  name: widget.partnerUsername,
+                  userid: widget.myUserId),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.partnerUsername,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    lastMessage.length > 25
+                        ? lastMessage.substring(0, 25) + '...'
+                        : lastMessage,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black54,
+                      fontSize: 16,
+                    ),
+                  )
+                ],
+              ),
             ],
-          )
+          ),
+          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Text(
+              lastTimeStamp,
+              style: const TextStyle(
+                fontWeight: FontWeight.normal,
+                color: Colors.black54,
+                fontSize: 16,
+              ),
+            ),
+            /*const Icon(
+              Icons.new_releases_rounded,
+              color: Color(0xFF198BAA),
+              size: 35,
+            )
+             */
+          ]),
         ],
       ),
     );
@@ -289,8 +346,9 @@ class _UserImageState extends State<UserImage> {
                     clipBehavior: Clip.none,
                     fit: StackFit.expand,
                     children: [
-                      CircleAvatar(backgroundColor: Colors.black87,
-                      backgroundImage: Image.network(profileImg!).image),
+                      CircleAvatar(
+                          backgroundColor: Colors.black87,
+                          backgroundImage: Image.network(profileImg!).image),
                     ])), // AppRoundImage.url
           ),
       ]),
@@ -298,6 +356,7 @@ class _UserImageState extends State<UserImage> {
   }
 
   Future downloadImage() async {
+    print(widget.userid);
     var downloadURL = await StorageMethods().getProfileImg(widget.userid);
     if (downloadURL != "") {
       setState(() {

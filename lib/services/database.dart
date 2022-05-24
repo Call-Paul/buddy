@@ -97,8 +97,8 @@ class DataBaseMethods {
         .snapshots();
   }
 
-  Future<String> getLastMessageOfChatRoom(
-      String chatRoomId, String myUserId) async {
+  Future<Map<String, dynamic>> getLastMessageOfChatRoom(
+      String chatRoomId) async {
         QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
         .collection("chatrooms")
         .doc(chatRoomId)
@@ -106,10 +106,13 @@ class DataBaseMethods {
         .orderBy("timeStamp", descending: true)
         .limit(1).get();
 
-        String lastMessage = "";
+        Map<String, dynamic> lastMessage = {};
         if(result.docs.isNotEmpty) {
           Map collection = result.docs.first.data();
-          lastMessage = collection["message"];
+          lastMessage["message"] = collection["message"];
+          lastMessage["time"] = collection["timeStamp"];
+
+
         }
         return lastMessage;
   }
