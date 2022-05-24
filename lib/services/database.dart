@@ -140,6 +140,24 @@ class DataBaseMethods {
     return documentId;
   }
 
+  Future<String> getUserIdByUserName(
+      String userName) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('users')
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+
+    String documentId = "";
+
+    documents.forEach((snapshot) {
+      if ((snapshot.get("username").toString() == userName)) {
+        documentId = snapshot.id;
+        return;
+      }
+    });
+    return documentId;
+  }
+
   saveUserInformationFromOnlineLocal(String userId) async {
     var collection = FirebaseFirestore.instance.collection('users');
     var docSnapshot = await collection.doc(userId).get();

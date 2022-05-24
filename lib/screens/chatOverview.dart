@@ -196,11 +196,18 @@ class _ChatState extends State<ChatWidget> {
   String? profileImg;
   String lastMessage = "";
   String lastTimeStamp = "";
+  String partnerUserId = "";
 
   @override
   void initState() {
     getLastMessage();
+    getParterUserId();
     super.initState();
+  }
+
+  void getParterUserId() async{
+    partnerUserId = await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+    setState(() {});
   }
 
   getLastMessage() async {
