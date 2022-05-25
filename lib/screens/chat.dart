@@ -5,6 +5,9 @@ import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../services/storage.dart';
 
 class Chat extends StatefulWidget {
   final String partnerUsername;
@@ -17,9 +20,13 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   String chatRoomId = "";
+  String? profileImg;
+
   Stream messageStream = const Stream.empty();
   late String myName, myUserName, myEmail, myUserId;
   TextEditingController messageTextEditingController = TextEditingController();
+
+  String partnerCompany = "";
 
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
@@ -45,7 +52,9 @@ class _ChatState extends State<Chat> {
                     topRight: Radius.circular(24),
                     bottomLeft:
                         sendByMe ? Radius.circular(24) : Radius.circular(0)),
-                color: Colors.amberAccent),
+                color: sendByMe
+                    ? Color.fromRGBO(140, 203, 245, 1)
+                    : Color.fromRGBO(238, 238, 238, 1)),
             padding: EdgeInsets.all(16),
             child: Text(
               message,
@@ -78,7 +87,14 @@ class _ChatState extends State<Chat> {
   }
 
   getAndSetMessages() async {
-    messageStream = await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
+    messageStream =
+        await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
+    setState(() {});
+  }
+
+  getPartnersCompany() async {
+    partnerCompany =
+        await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
     setState(() {});
   }
 
@@ -94,14 +110,14 @@ class _ChatState extends State<Chat> {
         "timeStamp": timeStamp
       };
 
-      DataBaseMethods().addMessage(chatRoomId, messageInfoMap).then((value) {
-      });
+      DataBaseMethods().addMessage(chatRoomId, messageInfoMap).then((value) {});
     }
   }
 
   doThisOnLaunch() async {
     await getMyInfoFormSharedPreferences();
     await getAndSetMessages();
+    await getPartnersCompany();
   }
 
   @override
@@ -113,34 +129,197 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.partnerUsername)),
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.black,
+        ),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(
+                  width: 2,
+                ),
+                UserImage(
+                    onFileChanged: (profileImg) {
+                      setState(() {});
+                      this.profileImg = profileImg;
+                    },
+                    partnerUsername: widget.partnerUsername),
+                SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        widget.partnerUsername,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        partnerCompany,
+                        style: TextStyle(
+                            color: Colors.grey.shade600, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Container(
+          color: Color.fromRGBO(250, 250, 250, 1),
           child: Stack(
-        children: [
-          chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                color: Colors.amberAccent,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: TextField(
-                      controller: messageTextEditingController,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none, hintText: "type a text"),
-                    )),
-                    GestureDetector(
-                        onTap: () {
-                          addMessage();
-                        },
-                        child: const Icon(Icons.send))
-                  ],
-                )),
-          )
-        ],
-      )),
+            children: [
+              chatMessages(),
+              Stack(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                      height: 60,
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: messageTextEditingController,
+                              decoration: InputDecoration(
+                                  hintText: "Nachricht",
+                                  hintStyle: TextStyle(color: Colors.black54),
+                                  border: InputBorder.none),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          FloatingActionButton(
+                            onPressed: () {
+                              addMessage();
+                              messageTextEditingController.text = "";
+                              setState((){});
+                            },
+                            child: Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            backgroundColor: Colors.black,
+                            elevation: 0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )),
     );
+  }
+}
+
+class UserImage extends StatefulWidget {
+  final Function(String profileImg) onFileChanged;
+
+  String partnerUsername;
+
+  UserImage({required this.onFileChanged, required this.partnerUsername});
+
+  @override
+  _UserImageState createState() => _UserImageState();
+}
+
+class _UserImageState extends State<UserImage> {
+  String? profileImg;
+  String partnerId = "";
+
+  @override
+  void initState() {
+    getPartnerUserIdAndDownloadImage();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Column(children: [
+        if (profileImg == null)
+          SizedBox(
+              height: 35,
+              width: 35,
+              child: Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.black87,
+                      child: Text(widget.partnerUsername == ""
+                          ? widget.partnerUsername.substring(1)
+                          : widget.partnerUsername.substring(0, 1) +
+                              widget.partnerUsername.substring(
+                                  widget.partnerUsername.lastIndexOf(' ') + 1,
+                                  widget.partnerUsername.lastIndexOf(' ') + 2)),
+                    ),
+                  ])),
+        if (profileImg != null)
+          InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: SizedBox(
+                height: 35,
+                width: 35,
+                child: Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      CircleAvatar(
+                          backgroundColor: Colors.black87,
+                          backgroundImage: Image.network(profileImg!).image),
+                    ])), // AppRoundImage.url
+          ),
+      ]),
+    );
+  }
+
+  void getPartnerUserIdAndDownloadImage() async {
+    partnerId =
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+    var downloadURL = await StorageMethods().getProfileImg(partnerId);
+
+    if (downloadURL != "") {
+      setState(() {
+        profileImg = downloadURL;
+      });
+      widget.onFileChanged(profileImg!);
+    }
   }
 }

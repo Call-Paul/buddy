@@ -188,4 +188,18 @@ class DataBaseMethods {
         .collection("chats")
         .snapshots();
   }
+
+  Future<String> getPartnersCompany(String partnerUsername) async{
+    String userId = await getUserIdByUserName(partnerUsername);
+    DocumentSnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .get();
+    String company= "";
+    if(result.exists) {
+      company = result.get("company");
+
+    }
+    return company;
+  }
 }

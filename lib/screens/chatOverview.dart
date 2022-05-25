@@ -23,6 +23,7 @@ class _ChatOverview extends State<ChatOverview> {
   Stream? usersStream;
   Stream? chatStream;
   late String myName, myUserName, myEmail, myUserId;
+  bool folded = false;
 
   @override
   void initState() {
@@ -37,51 +38,39 @@ class _ChatOverview extends State<ChatOverview> {
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                Row(children: [
-                  isSearching
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: GestureDetector(
-                              onTap: () {
-                                isSearching = false;
-                                searchEditingController.clear();
-                                setState(() {});
-                              },
-                              child: const Icon(Icons.arrow_back)))
-                      : Container(),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 16),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.grey,
-                              width: 1.0,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(24)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: TextField(
-                            onChanged: (text) {
-                              if (text == "") {
-                                isSearching = false;
-                                searchEditingController.clear();
-                                setState(() {});
-                              } else {
-                                onSearchBtnClick();
-                              }
-                            },
-                            controller: searchEditingController,
-                            decoration: const InputDecoration(
-                                border: InputBorder.none, hintText: "Username"),
-                          )),
-                          GestureDetector(child: const Icon(Icons.search))
-                        ],
-                      ),
-                    ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Colors.grey,
+                          width: 1.0,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(24)),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: TextField(
+                        onChanged: (text) {
+                          if (text == "") {
+                            isSearching = false;
+                            searchEditingController.clear();
+                            setState(() {});
+                          } else {
+                            onSearchBtnClick();
+                          }
+                        },
+                        controller: searchEditingController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: "Suchen..."),
+                      )),
+                      GestureDetector(child: const Icon(Icons.search))
+                    ],
                   ),
-                ]),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 isSearching ? searchUsersList() : chatList()
               ],
             )));
@@ -96,46 +85,20 @@ class _ChatOverview extends State<ChatOverview> {
                 itemCount: (snapshot.data! as QuerySnapshot).docs.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Container();
                   DocumentSnapshot ds =
                       (snapshot.data! as QuerySnapshot).docs[index];
-                  return searchListUser(
-                      ds["name"], ds["email"], ds["username"], ds["userid"]);
+
+                  return SearchListItem(
+                    partnerUsername: ds.get("username"),
+                    myUsername: myUserName,
+                    myUserId: myUserId,
+                  );
                 },
               )
             : const Center(child: CircularProgressIndicator());
       },
-    );
-  }
-
-  Widget searchListUser(
-      String name, String email, String partnerUsername, String partnerUserId) {
-    return GestureDetector(
-      onTap: () async {
-        Map<String, dynamic> chatRoomInfoMap = {
-          "users": [myUserName, partnerUsername]
-        };
-        if (await DataBaseMethods().getChatRoomIdByUsernames(
-                partnerUsername, myUserName, myUserId) ==
-            "") {
-          DataBaseMethods()
-              .createChatRoom(chatRoomInfoMap, myUserId, partnerUserId);
-        }
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Chat(partnerUsername)));
-      },
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(40),
-            child: const Icon(Icons.email),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(name), Text(email)],
-          )
-        ],
-      ),
     );
   }
 
@@ -201,18 +164,12 @@ class _ChatState extends State<ChatWidget> {
   @override
   void initState() {
     getLastMessage();
-    getParterUserId();
     super.initState();
   }
 
-  void getParterUserId() async{
-    partnerUserId = await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
-    setState(() {});
-  }
-
   getLastMessage() async {
-    Map<String, dynamic> lastInfo = await DataBaseMethods()
-        .getLastMessageOfChatRoom(widget.chatRoomId);
+    Map<String, dynamic> lastInfo =
+        await DataBaseMethods().getLastMessageOfChatRoom(widget.chatRoomId);
     lastMessage = lastInfo["message"];
     Timestamp t = lastInfo["time"];
 
@@ -220,7 +177,7 @@ class _ChatState extends State<ChatWidget> {
     if (t.toDate().day == yesterday.day) {
       lastTimeStamp = "Gestern";
     } else {
-      var format = DateFormat('hh:mm a');
+      var format = DateFormat('HH:mm');
       lastTimeStamp = format.format(t.toDate());
     }
     setState(() {});
@@ -246,8 +203,7 @@ class _ChatState extends State<ChatWidget> {
                     setState(() {});
                     this.profileImg = profileImg;
                   },
-                  name: widget.partnerUsername,
-                  userid: widget.myUserId),
+                  partnerUsername: widget.partnerUsername),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,9 +220,11 @@ class _ChatState extends State<ChatWidget> {
                     height: 5,
                   ),
                   Text(
-                    lastMessage.length > 25
-                        ? lastMessage.substring(0, 25) + '...'
-                        : lastMessage,
+                    lastMessage != null
+                        ? lastMessage.length > 25
+                            ? lastMessage.substring(0, 25) + '...'
+                            : lastMessage
+                        : "",
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       color: Colors.black54,
@@ -302,10 +260,9 @@ class _ChatState extends State<ChatWidget> {
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
-  String userid, name;
+  String partnerUsername;
 
-  UserImage(
-      {required this.onFileChanged, required this.name, required this.userid});
+  UserImage({required this.onFileChanged, required this.partnerUsername});
 
   @override
   _UserImageState createState() => _UserImageState();
@@ -313,10 +270,11 @@ class UserImage extends StatefulWidget {
 
 class _UserImageState extends State<UserImage> {
   String? profileImg;
+  String partnerId = "";
 
   @override
   void initState() {
-    downloadImage();
+    getPartnerUserIdAndDownloadImage();
     super.initState();
   }
 
@@ -324,7 +282,7 @@ class _UserImageState extends State<UserImage> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Column(children: [
         if (profileImg == null)
           SizedBox(
@@ -336,10 +294,13 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.black87,
-                      child: Text(widget.name.substring(0, 1) +
-                          widget.name.substring(
-                              widget.name.lastIndexOf(' ') + 1,
-                              widget.name.lastIndexOf(' ') + 2)),
+                      child: Text(widget.partnerUsername == null ||
+                              widget.partnerUsername == ""
+                          ? widget.partnerUsername.substring(1)
+                          : widget.partnerUsername.substring(0, 1) +
+                              widget.partnerUsername.substring(
+                                  widget.partnerUsername.lastIndexOf(' ') + 1,
+                                  widget.partnerUsername.lastIndexOf(' ') + 2)),
                     ),
                   ])),
         if (profileImg != null)
@@ -362,14 +323,111 @@ class _UserImageState extends State<UserImage> {
     );
   }
 
-  Future downloadImage() async {
-    print(widget.userid);
-    var downloadURL = await StorageMethods().getProfileImg(widget.userid);
+  void getPartnerUserIdAndDownloadImage() async {
+    partnerId =
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+    var downloadURL = await StorageMethods().getProfileImg(partnerId);
+
     if (downloadURL != "") {
       setState(() {
         profileImg = downloadURL;
       });
       widget.onFileChanged(profileImg!);
     }
+  }
+}
+
+class SearchListItem extends StatefulWidget {
+  String partnerUsername, myUserId, myUsername;
+
+  SearchListItem(
+      {required this.partnerUsername,
+      required this.myUserId,
+      required this.myUsername});
+
+  @override
+  _SearchListItemState createState() => _SearchListItemState();
+}
+
+class _SearchListItemState extends State<SearchListItem> {
+  String? profileImg;
+  String partnerUserId = "";
+
+  String partnerCompany ="";
+
+  getPartnersCompany() async {
+    partnerCompany =
+    await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
+    setState(() {});
+  }
+
+  doBeforeInit() async {
+    partnerUserId =
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+    await getPartnersCompany();
+  }
+
+  @override
+  void initState() {
+    doBeforeInit();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        Map<String, dynamic> chatRoomInfoMap = {
+          "users": [widget.myUsername, widget.partnerUsername]
+        };
+        if (await DataBaseMethods().getChatRoomIdByUsernames(
+                widget.partnerUsername, widget.myUsername, widget.myUserId) ==
+            "") {
+          DataBaseMethods()
+              .createChatRoom(chatRoomInfoMap, widget.myUserId, partnerUserId);
+        }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Chat(widget.partnerUsername)));
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              UserImage(
+                  onFileChanged: (profileImg) {
+                    setState(() {});
+                    this.profileImg = profileImg;
+                  },
+                  partnerUsername: widget.partnerUsername),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.partnerUsername,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    partnerCompany,
+                    style: TextStyle(
+                        color: Colors.grey.shade600, fontSize: 13),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

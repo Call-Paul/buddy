@@ -522,7 +522,10 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.black87,
-                      child: Text(widget.name.substring(0, 1) +
+                      child: Text(widget.name == null ||
+                          widget.name == ""
+                          ? widget.name.substring(1)
+                          : widget.name.substring(0, 1) +
                           widget.name.substring(
                               widget.name.lastIndexOf(' ') + 1,
                               widget.name.lastIndexOf(' ') + 2)),
