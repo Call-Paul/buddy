@@ -8,6 +8,7 @@ import 'package:buddy/services/auth.dart';
 import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
@@ -21,6 +22,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int pageIndex = 0;
 
+  int _tabTextIconIndexSelected = 0;
+
   @override
   void initState() {
     Stream<NDEFMessage> stream = NFC.readNDEF();
@@ -33,43 +36,71 @@ class _HomeState extends State<Home> {
   }
 
 
+  var _listGenderText = ["Buddy", "Seeker"];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
         actions: [
-          GestureDetector(
-            onTap: () {
-              AuthMethods().signOut();
-              AuthMethods().signOut().then((value) => Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => SignIn())));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Icon(
-                Icons.person,
-                color: Color.fromRGBO(18, 110, 194, 1),
-                size: 30,
-              ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: FlutterToggleTab(
+              width: 30,
+              height: 10,
+              borderRadius: 15,
+
+              selectedTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600),
+              unSelectedTextStyle: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400),
+              labels: _listGenderText,
+              selectedIndex: _tabTextIconIndexSelected,
+              selectedLabelIndex: (index) {
+                setState(() {
+                  _tabTextIconIndexSelected = index;
+                });
+              },
             ),
-          )
+          ),
+          GestureDetector(
+              onTap: () {
+                AuthMethods().signOut().then((value) =>
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => SignIn())));
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Icon(
+                  Icons.person,
+                  color: Color.fromRGBO(18, 110, 194, 1),
+                  size: 30,
+                ),
+              )),
+
         ],
+        title: Text("Hallo"),
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: Builder(
           builder: (BuildContext context) {
-            return IconButton(
-              color: const Color.fromRGBO(18, 110, 194, 1),
-              icon: const Icon(
-                Icons.menu,
-                size: 30,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
+            return
+                IconButton(
+                  color: const Color.fromRGBO(18, 110, 194, 1),
+                  icon: const Icon(
+                    Icons.menu,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                );
           },
         ),
       ),
@@ -122,17 +153,18 @@ class _HomeState extends State<Home> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: const Text(
                   "Die Otto (GmbH & Co KG) (früher Otto Versand (GmbH & Co), auch Otto Group) ist ein deutsches Handels- und Dienstleistungsunternehmen mit Sitz in Hamburg, das weltweit mit rund 52.000 Mitarbeitern agiert und in den Unternehmensbereichen Einzelhandel, Finanzierung und Logistik sowie Versandhandel aktiv ist.",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'SansSerif',
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ))
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'SansSerif',
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ))
           ],
         ));
   }
