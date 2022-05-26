@@ -104,7 +104,7 @@ class _HomeState extends State<Home> {
         child: pageIndex == 0
             ? buildHome(context)
             : pageIndex == 1
-                ? Map()
+                ? MapScreen()
                 : ChatOverview(),
       ),
     );

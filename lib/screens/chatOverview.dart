@@ -342,8 +342,8 @@ class SearchListItem extends StatefulWidget {
 
   SearchListItem(
       {required this.partnerUsername,
-      required this.myUserId,
-      required this.myUsername});
+        required this.myUserId,
+        required this.myUsername});
 
   @override
   _SearchListItemState createState() => _SearchListItemState();

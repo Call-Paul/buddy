@@ -202,4 +202,29 @@ class DataBaseMethods {
     }
     return company;
   }
+
+  addMeeting(Map<String, dynamic> meetingDetails) async {
+    log("DB: addMeeting");
+    var uuidGenerator = const Uuid();
+    var uuid = uuidGenerator.v4();
+    final snapshot = await FirebaseFirestore.instance
+        .collection("meetings")
+        .doc(uuid)
+        .get();
+    if (snapshot.exists) {
+      return true;
+    } else {
+      return FirebaseFirestore.instance
+          .collection("meetings")
+          .doc(uuid)
+          .set(meetingDetails);
+    }
+  }
+
+  getMeetingMarker() {
+    final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+        .collection('meetings')
+        .snapshots();
+    return stream;
+  }
 }
