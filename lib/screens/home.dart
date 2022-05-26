@@ -5,14 +5,10 @@ import 'package:buddy/screens/helperScreens/navdrawer.dart';
 import 'package:buddy/screens/map.dart';
 import 'package:buddy/screens/signIn.dart';
 import 'package:buddy/services/auth.dart';
-import 'package:buddy/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
-import '../helperfunctions/sharedpref_helper.dart';
-import 'chat.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -84,7 +80,6 @@ class _HomeState extends State<Home> {
               )),
 
         ],
-        title: Text("Hallo"),
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: Builder(
@@ -109,7 +104,7 @@ class _HomeState extends State<Home> {
         child: pageIndex == 0
             ? buildHome(context)
             : pageIndex == 1
-                ? HeatMap()
+                ? Map()
                 : ChatOverview(),
       ),
     );
