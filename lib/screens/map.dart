@@ -13,7 +13,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  var test = "";
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +26,24 @@ class _MapScreenState extends State<MapScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text("Loading");
             }
-            List<LatLng> _latLngList = [];
-            Map<String, dynamic> informations = {};
+            List<Map<String, dynamic> > _latLngList = [];
             try {
               snapshot.data!.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
-                _latLngList.add(LatLng(data["lat"], data["long"]));
+                Map<String, dynamic> informations = {};
+
+                LatLng point = LatLng(data["lat"], data["long"]);
+                informations.addAll({"point": point});
                 informations.addAll({"name1": data["name1"]});
                 informations.addAll({"name2": data["name2"]});
                 informations.addAll({"topic": data["topic"]});
+                _latLngList.add(informations);
               }).toList();
             } catch (e) {
               print(e.toString());
             }
-            return MeetingMap(latLngList: _latLngList, informations: informations,);
+            return MeetingMap(latLngList: _latLngList);
           }),
     );
   }
@@ -60,10 +62,9 @@ class _MapScreenState extends State<MapScreen> {
 }
 
 class MeetingMap extends StatefulWidget {
-  List<LatLng> latLngList = [];
-  Map<String, dynamic> informations = {};
+  List<Map<String, dynamic>> latLngList = [];
 
-  MeetingMap({required this.latLngList, required this.informations});
+  MeetingMap({required this.latLngList});
 
   @override
   _MeetingMapState createState() => _MeetingMapState();
@@ -73,7 +74,7 @@ class _MeetingMapState extends State<MeetingMap> {
   final PopupController _popupController = PopupController();
 
   MapController _mapController = MapController();
-  double _zoom = 7;
+  double _zoom = 11;
   List<Marker> _markers = [];
 
   @override
@@ -87,6 +88,8 @@ class _MeetingMapState extends State<MeetingMap> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
+        center: LatLng(53.5754728,9.9876184),
+
         onMapCreated: (controller) {
           if (mounted) {
             _getGeoLocationPosition(controller);
@@ -97,7 +100,7 @@ class _MeetingMapState extends State<MeetingMap> {
         plugins: [
           MarkerClusterPlugin(),
         ],
-        //onTap: (_) => _popupController.hidePopup(),
+        onTap: (tap, point) {_popupController.hideAllPopups();}
       ),
       layers: [
         TileLayerOptions(
@@ -110,7 +113,7 @@ class _MeetingMapState extends State<MeetingMap> {
         ),
         MarkerClusterLayerOptions(
           maxClusterRadius: 190,
-          disableClusteringAtZoom: 16,
+          disableClusteringAtZoom: 12,
           size: Size(50, 50),
           fitBoundsOptions: FitBoundsOptions(
             padding: EdgeInsets.all(50),
@@ -136,7 +139,7 @@ class _MeetingMapState extends State<MeetingMap> {
                           Padding(
                             padding: EdgeInsets.all(5),
                             child: Text(
-                              widget.informations["topic"],
+                              getInformationWithPoint(marker.point, "topic"),
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -159,7 +162,7 @@ class _MeetingMapState extends State<MeetingMap> {
                            Padding(
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              widget.informations["name1"],
+                              getInformationWithPoint(marker.point, "name1"),
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 12,
@@ -170,7 +173,7 @@ class _MeetingMapState extends State<MeetingMap> {
                           Padding(
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              widget.informations["name2"],
+                              getInformationWithPoint(marker.point, "name2"),
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 12,
@@ -195,12 +198,18 @@ class _MeetingMapState extends State<MeetingMap> {
     );
   }
 
-
+  getInformationWithPoint(LatLng latLng, String field){
+    for(int i= 0;i<widget.latLngList.length;i++){
+      if(widget.latLngList[i]["point"] == latLng){
+        return widget.latLngList[i][field];
+      }
+    }
+  }
 
   refreshMarkers() {
     _markers = widget.latLngList
         .map((point) => Marker(
-              point: point,
+              point: point["point"],
               width: 60,
               height: 60,
               builder: (context) => Icon(

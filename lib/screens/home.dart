@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:buddy/screens/chatOverview.dart';
 import 'package:buddy/screens/helperScreens/navdrawer.dart';
 import 'package:buddy/screens/map.dart';
+import 'package:buddy/screens/profile.dart';
 import 'package:buddy/screens/signIn.dart';
 import 'package:buddy/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
@@ -39,6 +41,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.black,
+        ),
         actions: [
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
@@ -47,11 +52,11 @@ class _HomeState extends State<Home> {
               height: 10,
               borderRadius: 15,
 
-              selectedTextStyle: TextStyle(
+              selectedTextStyle: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600),
-              unSelectedTextStyle: TextStyle(
+              unSelectedTextStyle: const TextStyle(
                   color: Colors.blue,
                   fontSize: 10,
                   fontWeight: FontWeight.w400),
@@ -66,9 +71,13 @@ class _HomeState extends State<Home> {
           ),
           GestureDetector(
               onTap: () {
-                AuthMethods().signOut().then((value) =>
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EditProfile()));
+                /*AuthMethods().signOut().then((value) =>
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => SignIn())));
+
+                 */
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
