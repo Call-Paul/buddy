@@ -212,7 +212,7 @@ class _ChatState extends State<ChatWidget> {
                     widget.partnerUsername,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.black,
                       fontSize: 18,
                     ),
                   ),
@@ -227,7 +227,7 @@ class _ChatState extends State<ChatWidget> {
                         : "",
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: Colors.black54,
+                      color: Color.fromRGBO(52, 95, 104, 1),
                       fontSize: 16,
                     ),
                   )
@@ -240,7 +240,7 @@ class _ChatState extends State<ChatWidget> {
               lastTimeStamp,
               style: const TextStyle(
                 fontWeight: FontWeight.normal,
-                color: Colors.black54,
+                color: Color.fromRGBO(52, 95, 104, 1),
                 fontSize: 16,
               ),
             ),
@@ -293,7 +293,7 @@ class _UserImageState extends State<UserImage> {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                      backgroundColor: Colors.black87,
+                      backgroundColor: Color.fromRGBO(52, 95, 104, 1),
                       child: Text(widget.partnerUsername == null ||
                               widget.partnerUsername == ""
                           ? widget.partnerUsername.substring(1)
@@ -315,7 +315,7 @@ class _UserImageState extends State<UserImage> {
                     fit: StackFit.expand,
                     children: [
                       CircleAvatar(
-                          backgroundColor: Colors.black87,
+                          backgroundColor: Color.fromRGBO(52, 95, 104, 1),
                           backgroundImage: Image.network(profileImg!).image),
                     ])), // AppRoundImage.url
           ),
@@ -410,7 +410,7 @@ class _SearchListItemState extends State<SearchListItem> {
                     widget.partnerUsername,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Color.fromRGBO(52, 95, 104, 1),
                       fontSize: 18,
                     ),
                   ),
@@ -420,7 +420,7 @@ class _SearchListItemState extends State<SearchListItem> {
                   Text(
                     partnerCompany,
                     style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 13),
+                        color: Color.fromRGBO(95, 152, 161, 1), fontSize: 13),
                   ),
                 ],
               ),

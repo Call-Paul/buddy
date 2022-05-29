@@ -48,7 +48,7 @@ class _EditProfileState extends State<EditProfile> {
 
     if (downloadURL != "") {
       setState(() {
-        backgroundImg = downloadURL;
+        //backgroundImg = downloadURL;
       });
     }
   }
@@ -76,8 +76,8 @@ class _EditProfileState extends State<EditProfile> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                            Color.fromRGBO(252, 87, 94, 1),
-                            Color.fromRGBO(248, 86, 155, 1)
+                                Color.fromRGBO(52, 95, 104, 1),
+                                Color.fromRGBO(128, 172, 173, 1)
                           ])
                           // LinearGradient
                           ),
@@ -101,7 +101,7 @@ class _EditProfileState extends State<EditProfile> {
                           widget.userName,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Color.fromRGBO(52, 95, 104, 1),
                               fontSize: 22,
                               letterSpacing: 10),
                           // textAlign: TextAlign.left
@@ -113,7 +113,7 @@ class _EditProfileState extends State<EditProfile> {
                           widget.company,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Color.fromRGBO(52, 95, 104, 1),
                               fontSize: 12,
                               letterSpacing: 18),
                           // textAlign: TextAlign.left
@@ -121,12 +121,12 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       widget.skill1 != ""
                           ? Container(
-                              margin: const EdgeInsets.only(top: 40),
+                              margin: const EdgeInsets.only(top: 30),
                               child: Text(
                                 "• ${widget.skill1}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: Color.fromRGBO(52, 95, 104, 1),
                                     fontSize: 16,
                                     letterSpacing: 2),
                                 // textAlign: TextAlign.left
@@ -140,7 +140,7 @@ class _EditProfileState extends State<EditProfile> {
                                 "• ${widget.skill2}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: Color.fromRGBO(52, 95, 104, 1),
                                     fontSize: 16,
                                     letterSpacing: 2),
                                 // textAlign: TextAlign.left
@@ -154,7 +154,7 @@ class _EditProfileState extends State<EditProfile> {
                                 "• ${widget.skill3}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: Color.fromRGBO(52, 95, 104, 1),
                                     fontSize: 16,
                                     letterSpacing: 2),
                                 // textAlign: TextAlign.left
@@ -168,7 +168,7 @@ class _EditProfileState extends State<EditProfile> {
                                 "• ${widget.skill4}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: Color.fromRGBO(52, 95, 104, 1),
                                     fontSize: 16,
                                     letterSpacing: 2),
                                 // textAlign: TextAlign.left
@@ -186,7 +186,11 @@ class _EditProfileState extends State<EditProfile> {
                               margin: EdgeInsets.only(right: 10),
                               child: OutlinedButton(
                                 onPressed: () {},
-                                child: Text('Treffen'),
+                                child: Text(
+                                  'Treffen',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(52, 95, 104, 1)),
+                                ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
@@ -199,7 +203,11 @@ class _EditProfileState extends State<EditProfile> {
                               margin: EdgeInsets.only(right: 10),
                               child: OutlinedButton(
                                 onPressed: () {},
-                                child: Text('Meet-Ups'),
+                                child: Text(
+                                  'Meet-Ups',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(52, 95, 104, 1)),
+                                ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
@@ -212,7 +220,11 @@ class _EditProfileState extends State<EditProfile> {
                               margin: EdgeInsets.only(right: 10),
                               child: OutlinedButton(
                                 onPressed: () {},
-                                child: Text('Unternehmensführung'),
+                                child: Text(
+                                  'Unternehmensführung',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(52, 95, 104, 1)),
+                                ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
@@ -239,7 +251,7 @@ class _EditProfileState extends State<EditProfile> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(60.0),
-                            color: Color.fromRGBO(252, 87, 94, 1),
+                            color: Color.fromRGBO(202, 170, 147, 1),
                             // LinearGradient
                           ),
                           // BoxDecoration
@@ -260,7 +272,8 @@ class _EditProfileState extends State<EditProfile> {
                 right: 0.0,
                 child: AppBar(
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back,
+                        color: Color.fromRGBO(195, 118, 75, 1)),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   backgroundColor: Colors.transparent,
@@ -315,7 +328,7 @@ class _UserImageState extends State<UserImage> {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                      backgroundColor: Colors.black87,
+                      backgroundColor: Color.fromRGBO(52, 95, 104, 1),
                       child: Text(widget.name == ""
                           ? widget.name.substring(1)
                           : widget.name.substring(0, 1) +
@@ -333,7 +346,7 @@ class _UserImageState extends State<UserImage> {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                        backgroundColor: Colors.black87,
+                        backgroundColor: Color.fromRGBO(52, 95, 104, 1),
                         backgroundImage: Image.network(profileImg!).image),
                   ])), // AppRoundImage.url
       ]),
