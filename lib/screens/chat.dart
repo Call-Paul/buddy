@@ -53,8 +53,8 @@ class _ChatState extends State<Chat> {
                     bottomLeft:
                         sendByMe ? Radius.circular(24) : Radius.circular(0)),
                 color: sendByMe
-                    ? Color.fromRGBO(128, 172, 173, 1)
-                    : Color.fromRGBO(238, 238, 238, 1)),
+                    ? const Color.fromRGBO(128, 172, 173, 1)
+                    : const Color.fromRGBO(238, 238, 238, 1)),
             padding: EdgeInsets.all(16),
             child: Text(
               message,

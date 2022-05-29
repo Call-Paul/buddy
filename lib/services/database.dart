@@ -202,6 +202,19 @@ class DataBaseMethods {
     return company;
   }
 
+  Future<String> getUsernameById(String userId) async{
+    DocumentSnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .get();
+    String username= "";
+    if(result.exists) {
+      username = result.get("username");
+
+    }
+    return username;
+  }
+
   addMeeting(Map<String, dynamic> meetingDetails) async {
     log("DB: addMeeting");
     var uuidGenerator = const Uuid();

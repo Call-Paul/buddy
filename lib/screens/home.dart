@@ -9,9 +9,13 @@ import 'package:buddy/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
+import '../services/database.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -29,6 +33,9 @@ class _HomeState extends State<Home> {
   String skill3 = "";
   String skill4 = "";
 
+  TextEditingController topic = TextEditingController();
+  String scannedId ="";
+
   int _tabTextIconIndexSelected = 0;
 
   @override
@@ -36,7 +43,8 @@ class _HomeState extends State<Home> {
     Stream<NDEFMessage> stream = NFC.readNDEF();
 
     stream.listen((NDEFMessage message) {
-      print("records: ${message.data}");
+      scannedId = message.data;
+      showBottomDialog();
     });
     getDataFromPrefs();
     super.initState();
@@ -105,7 +113,6 @@ class _HomeState extends State<Home> {
                               skill3: skill3,
                               skill4: skill4,
                             )));
-
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -136,13 +143,130 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: buildMyNavBar(context),
       body: SafeArea(
-        child: pageIndex == 0
-            ? buildHome(context)
-            : pageIndex == 1
-                ? MapScreen()
-                : ChatOverview(),
-      ),
+          child: Stack(
+        children: [
+          pageIndex == 0
+              ? buildHome(context)
+              : pageIndex == 1
+                  ? MapScreen()
+                  : ChatOverview(),
+        ],
+      )),
     );
+  }
+
+  showBottomDialog() async {
+    await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => BottomSheet(
+              builder: (context) => Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Wrap(
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: const Text(
+                              "Meeting teilen",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(195, 118, 75, 1),
+                                  fontSize: 30,
+                                  letterSpacing: 8),
+                              // textAlign: TextAlign.left
+                            ),
+                            margin: EdgeInsets.all(20),
+                          ),
+                          Container(
+                            width: 200,
+                            child: TextFormField(
+                                controller: topic,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                decoration: InputDecoration(
+                                  labelText: "Thema",
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
+                                  ),
+                                  //fillColor: Colors.green
+                                ),
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                )),
+                          ),
+
+                          InkWell(
+                            onTap: () async {
+                              if (topic.text != "") {
+                                String partnerUsername = "";
+                                if(scannedId != ""){
+                                  partnerUsername = await DataBaseMethods()
+                                      .getUsernameById(scannedId);
+                                }
+                                Position position = await _getGeoLocationPosition();
+                                addMeeting(position.latitude, position.longitude, userName, partnerUsername, topic.text);
+                                topic.text = "";
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(20),
+                              alignment: Alignment.center,
+                              height: 50,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(60.0),
+                                color: Color.fromRGBO(202, 170, 147, 1),
+                                // LinearGradient
+                              ),
+                              // BoxDecoration
+                              padding: const EdgeInsets.all(0),
+                              child: const Text(
+                                "Teilen",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold), // TextStyle
+                              ), // Text
+                            ),
+                          ), // Con
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              onClosing: () {},
+            ));
+  }
+
+  addMeeting(
+      double lat, double long, String name1, String name2, String topic) async {
+    Map<String, dynamic> meetingInfos = {
+      "lat": lat,
+      "long": long,
+      "name1": name1,
+      "name2": name2,
+      "topic": topic,
+    };
+    await DataBaseMethods().addMeeting(meetingInfos);
+  }
+
+  _getGeoLocationPosition() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied) {
+    } else {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      return position;
+    }
   }
 
   Widget buildHome(BuildContext context) {

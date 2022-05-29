@@ -41,24 +41,13 @@ class _MapScreenState extends State<MapScreen> {
                 _latLngList.add(informations);
               }).toList();
             } catch (e) {
-              print(e.toString());
             }
             return MeetingMap(latLngList: _latLngList);
           }),
     );
   }
 
-  addMeeting(
-      double lat, double long, String name1, String name2, String topic) async {
-    Map<String, dynamic> meetingInfos = {
-      "lat": lat,
-      "long": long,
-      "name1": name1,
-      "name2": name2,
-      "topic": topic,
-    };
-    await DataBaseMethods().addMeeting(meetingInfos);
-  }
+
 }
 
 class MeetingMap extends StatefulWidget {
