@@ -25,7 +25,7 @@ class _NavDrawer extends State<NavDrawer> {
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'SansSerif',
-                  color: Colors.grey,
+                  color: Color.fromRGBO(52, 95, 104, 1),
                 ),
               ),
             ),
@@ -51,7 +51,7 @@ class _NavDrawer extends State<NavDrawer> {
                       width: 40.0,
                       height: 40.0,
                       decoration: const BoxDecoration(
-                        color: Color.fromRGBO(240, 232, 76, 1),
+                        color: Color.fromRGBO(95, 152, 161, 1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -60,7 +60,7 @@ class _NavDrawer extends State<NavDrawer> {
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SansSerif',
-                          color: Colors.grey,
+                          color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
                       child: _value == 0
@@ -68,7 +68,7 @@ class _NavDrawer extends State<NavDrawer> {
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromRGBO(255, 136, 27, 1)),
+                                  color: Color.fromRGBO(195, 118, 75, 1)),
                               child: const Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Icon(
@@ -118,7 +118,7 @@ class _NavDrawer extends State<NavDrawer> {
                       width: 40.0,
                       height: 40.0,
                       decoration: const BoxDecoration(
-                        color: Color.fromRGBO(140, 219, 185, 1),
+                        color: Color.fromRGBO(128, 172, 173, 1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -127,7 +127,7 @@ class _NavDrawer extends State<NavDrawer> {
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SansSerif',
-                          color: Colors.grey,
+                          color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
                       child: _value == 1
@@ -135,7 +135,7 @@ class _NavDrawer extends State<NavDrawer> {
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromRGBO(255, 136, 27, 1)),
+                                  color: Color.fromRGBO(195, 118, 75, 1)),
                               child: const Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Icon(
@@ -185,7 +185,7 @@ class _NavDrawer extends State<NavDrawer> {
                       width: 40.0,
                       height: 40.0,
                       decoration: const BoxDecoration(
-                        color: Color.fromRGBO(217, 111, 59, 1),
+                        color: Color.fromRGBO(180, 193, 187, 1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -194,7 +194,7 @@ class _NavDrawer extends State<NavDrawer> {
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SansSerif',
-                          color: Colors.grey,
+                          color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
                       child: _value == 2
@@ -202,7 +202,7 @@ class _NavDrawer extends State<NavDrawer> {
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromRGBO(255, 136, 27, 1)),
+                                  color: Color.fromRGBO(195, 118, 75, 1)),
                               child: const Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Icon(

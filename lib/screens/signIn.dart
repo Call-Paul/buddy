@@ -47,7 +47,7 @@ class _SignInState extends State<SignIn> {
                 "BUDDY",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: const Color.fromRGBO(229, 36, 39, 1),
+                    color: const Color.fromRGBO(195, 118, 75, 1),
                     fontSize: 40,
                     letterSpacing: size.width * 0.02),
                 // textAlign: TextAlign.left
@@ -56,7 +56,7 @@ class _SignInState extends State<SignIn> {
                 "Willkommen im Hafen",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Color.fromRGBO(52, 95, 104, 1),
                     fontSize: 20,
                     letterSpacing: size.width * 0.01),
                 // textAlign: TextAlign.left

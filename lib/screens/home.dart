@@ -72,12 +72,13 @@ class _HomeState extends State<Home> {
               width: 30,
               height: 10,
               borderRadius: 15,
+              selectedBackgroundColors: [Color.fromRGBO(128, 172, 173, 1)],
               selectedTextStyle: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600),
               unSelectedTextStyle: const TextStyle(
-                  color: Colors.blue,
+                  color: Color.fromRGBO(195, 118, 75, 1),
                   fontSize: 10,
                   fontWeight: FontWeight.w400),
               labels: _listGenderText,
@@ -110,7 +111,7 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: const Icon(
                   Icons.person,
-                  color: Color.fromRGBO(18, 110, 194, 1),
+                  color: Color.fromRGBO(195, 118, 75, 1),
                   size: 30,
                 ),
               )),
@@ -120,7 +121,7 @@ class _HomeState extends State<Home> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              color: const Color.fromRGBO(18, 110, 194, 1),
+              color: const Color.fromRGBO(195, 118, 75, 1),
               icon: const Icon(
                 Icons.menu,
                 size: 30,
@@ -166,7 +167,8 @@ class _HomeState extends State<Home> {
         height: 400,
         decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.amber,
+              width: 2,
+              color: Color.fromRGBO(202, 170, 147, 1),
             ),
             borderRadius: const BorderRadius.all(const Radius.circular(20))),
         child: Column(
@@ -190,7 +192,7 @@ class _HomeState extends State<Home> {
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'SansSerif',
-                    color: Colors.grey,
+                    color: Color.fromRGBO(52, 95, 104, 1),
                   ),
                   textAlign: TextAlign.center,
                 ))
@@ -223,12 +225,12 @@ class _HomeState extends State<Home> {
               icon: pageIndex == 0
                   ? const Icon(
                       Icons.home_filled,
-                      color: Color(0xFF198BAA),
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     )
                   : const Icon(
                       Icons.home_outlined,
-                      color: Color(0xFF198BAA),
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     ),
             ),
@@ -241,13 +243,13 @@ class _HomeState extends State<Home> {
               },
               icon: pageIndex == 1
                   ? const Icon(
-                      Icons.work_rounded,
-                      color: Color(0xFF198BAA),
+                      Icons.map,
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     )
                   : const Icon(
-                      Icons.work_outline_outlined,
-                      color: Color(0xFF198BAA),
+                      Icons.map_outlined,
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     ),
             ),
@@ -261,12 +263,12 @@ class _HomeState extends State<Home> {
               icon: pageIndex == 2
                   ? const Icon(
                       Icons.chat_bubble,
-                      color: Color(0xFF198BAA),
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     )
                   : const Icon(
                       Icons.chat_bubble_outline_outlined,
-                      color: Color(0xFF198BAA),
+                      color: Color.fromRGBO(95, 152, 161, 1),
                       size: 35,
                     ),
             ),
