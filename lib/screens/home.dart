@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
+import '../helperfunctions/sharedpref_helper.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,6 +20,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int pageIndex = 0;
+  String displayName = "";
+  String userId = "";
+  String userName = "";
+  String company = "";
+  String skill1 = "";
+  String skill2 = "";
+  String skill3 = "";
+  String skill4 = "";
 
   int _tabTextIconIndexSelected = 0;
 
@@ -29,10 +38,22 @@ class _HomeState extends State<Home> {
     stream.listen((NDEFMessage message) {
       print("records: ${message.data}");
     });
-
+    getDataFromPrefs();
     super.initState();
   }
 
+  getDataFromPrefs() async {
+    displayName = (await SharedPreferencesHelper().getUserDisplayName())!;
+    userId = (await SharedPreferencesHelper().getUserId())!;
+    company = (await SharedPreferencesHelper().getUserCompany())!;
+    userName = (await SharedPreferencesHelper().getUserName())!;
+    String skills = (await SharedPreferencesHelper().getUserSkills())!;
+    var array = skills.split("|");
+    skill1 = array[0];
+    skill2 = array[1];
+    skill3 = array[2];
+    skill4 = array[3];
+  }
 
   var _listGenderText = ["Buddy", "Seeker"];
 
@@ -51,7 +72,6 @@ class _HomeState extends State<Home> {
               width: 30,
               height: 10,
               borderRadius: 15,
-
               selectedTextStyle: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
@@ -71,13 +91,20 @@ class _HomeState extends State<Home> {
           ),
           GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EditProfile()));
-                /*AuthMethods().signOut().then((value) =>
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => SignIn())));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditProfile(
+                              myDisplayName: displayName,
+                              myUserId: userId,
+                              userName: userName,
+                              company: company,
+                              skill1: skill1,
+                              skill2: skill2,
+                              skill3: skill3,
+                              skill4: skill4,
+                            )));
 
-                 */
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -87,24 +114,22 @@ class _HomeState extends State<Home> {
                   size: 30,
                 ),
               )),
-
         ],
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: Builder(
           builder: (BuildContext context) {
-            return
-                IconButton(
-                  color: const Color.fromRGBO(18, 110, 194, 1),
-                  icon: const Icon(
-                    Icons.menu,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-                );
+            return IconButton(
+              color: const Color.fromRGBO(18, 110, 194, 1),
+              icon: const Icon(
+                Icons.menu,
+                size: 30,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
           },
         ),
       ),

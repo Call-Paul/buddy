@@ -25,4 +25,14 @@ class StorageMethods {
       return "";
     }
   }
+
+  Future<String> getProfileBackgroundImg(String userId) async {
+    var storageRef = storage.child("user/profile/profile_background/otto.jpg");
+    try {
+      var downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (err) {
+      return "";
+    }
+  }
 }

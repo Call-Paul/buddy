@@ -363,7 +363,8 @@ class _CreateProfile extends State<CreateProfile> {
                           DateTime now = new DateTime.now();
                           await SharedPreferencesHelper()
                               .saveUserName(usernameController.text);
-                          await SharedPreferencesHelper().saveUserStartDate(now);
+                          await SharedPreferencesHelper()
+                              .saveUserStartDate(now);
                           await SharedPreferencesHelper()
                               .saveUserCompany(companyController.text);
                           await SharedPreferencesHelper().saveUserGuide(
@@ -522,13 +523,12 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.black87,
-                      child: Text(widget.name == null ||
-                          widget.name == ""
+                      child: Text(widget.name == null || widget.name == ""
                           ? widget.name.substring(1)
                           : widget.name.substring(0, 1) +
-                          widget.name.substring(
-                              widget.name.lastIndexOf(' ') + 1,
-                              widget.name.lastIndexOf(' ') + 2)),
+                              widget.name.substring(
+                                  widget.name.lastIndexOf(' ') + 1,
+                                  widget.name.lastIndexOf(' ') + 2)),
                     ),
                     Positioned(
                         bottom: 0,
@@ -624,7 +624,8 @@ class _UserImageState extends State<UserImage> {
     }
 
     final File? imageFile = File(pickedFile.path);
-    var downloadURL =  await StorageMethods().uploadFile(widget.userid, imageFile!);
+    var downloadURL =
+        await StorageMethods().uploadFile(widget.userid, imageFile!);
 
     setState(() {
       profileImg = downloadURL;

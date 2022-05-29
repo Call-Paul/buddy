@@ -53,10 +53,10 @@ class AuthMethods {
         "accountid": userDetails.uid
       };
 
-      DataBaseMethods().checkIfAccountExists(userDetails.uid).then((value) => {
+      DataBaseMethods().checkIfAccountExists(userDetails.uid).then((value) async => {
             if (value != "")
               {
-          DataBaseMethods().saveUserInformationFromOnlineLocal(value),
+          await DataBaseMethods().saveUserInformationFromOnlineLocal(value),
           Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Home()))
               }

@@ -163,20 +163,19 @@ class DataBaseMethods {
     var docSnapshot = await collection.doc(userId).get();
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data()!;
-
       // You can then retrieve the value from the Map like this:
-      SharedPreferencesHelper().saveAccountId(data["accountid"]);
-      SharedPreferencesHelper().saveUserCompany(data["company"]);
-      SharedPreferencesHelper().saveUserEmail(data["email"]);
-      SharedPreferencesHelper().saveUserGuide(data["guide"]);
-      SharedPreferencesHelper().saveUserMeet(data["meet"]);
-      SharedPreferencesHelper().saveUserDisplayName(data["name"]);
-      SharedPreferencesHelper().saveUserMeetUp(data["official_meet"]);
-      SharedPreferencesHelper().saveUserSkills(data["skills"]);
-      SharedPreferencesHelper().saveUserStartDate(
+      await SharedPreferencesHelper().saveAccountId(data["accountid"]);
+      await SharedPreferencesHelper().saveUserCompany(data["company"]);
+      await SharedPreferencesHelper().saveUserEmail(data["email"]);
+      await SharedPreferencesHelper().saveUserGuide(data["guide"]);
+      await SharedPreferencesHelper().saveUserMeet(data["meet"]);
+      await SharedPreferencesHelper().saveUserDisplayName(data["name"]);
+      await SharedPreferencesHelper().saveUserMeetUp(data["official_meet"]);
+      await SharedPreferencesHelper().saveUserSkills(data["skills"]);
+      await SharedPreferencesHelper().saveUserStartDate(
           DateTime.parse(data["startDate"].toDate().toString()));
-      SharedPreferencesHelper().saveUserId(data["userid"]);
-      SharedPreferencesHelper().saveUserName(data["username"]);
+      await SharedPreferencesHelper().saveUserId(data["userid"]);
+      await SharedPreferencesHelper().saveUserName(data["username"]);
     }
   }
 
