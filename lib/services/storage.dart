@@ -26,8 +26,8 @@ class StorageMethods {
     }
   }
 
-  Future<String> getProfileBackgroundImg(String userId) async {
-    var storageRef = storage.child("user/profile/profile_background/otto.jpg");
+  Future<String> getCompanyImage(String companyId) async {
+    var storageRef = storage.child("companys/${companyId}.jpg");
     try {
       var downloadUrl = await storageRef.getDownloadURL();
       return downloadUrl;

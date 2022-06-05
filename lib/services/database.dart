@@ -210,7 +210,6 @@ class DataBaseMethods {
     String username= "";
     if(result.exists) {
       username = result.get("username");
-
     }
     return username;
   }
@@ -236,6 +235,13 @@ class DataBaseMethods {
   getMeetingMarker() {
     final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
         .collection('meetings')
+        .snapshots();
+    return stream;
+  }
+
+  getCompanyList () {
+    final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+        .collection('companys')
         .snapshots();
     return stream;
   }

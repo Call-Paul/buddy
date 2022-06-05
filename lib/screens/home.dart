@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:buddy/screens/chatOverview.dart';
 import 'package:buddy/screens/helperScreens/navdrawer.dart';
 import 'package:buddy/screens/map.dart';
+import 'package:buddy/screens/overviewPage.dart';
 import 'package:buddy/screens/profile.dart';
 import 'package:buddy/screens/signIn.dart';
 import 'package:buddy/services/auth.dart';
@@ -36,8 +37,6 @@ class _HomeState extends State<Home> {
   TextEditingController topic = TextEditingController();
   String scannedId ="";
 
-  int _tabTextIconIndexSelected = 0;
-
   @override
   void initState() {
     Stream<NDEFMessage> stream = NFC.readNDEF();
@@ -63,7 +62,6 @@ class _HomeState extends State<Home> {
     skill4 = array[3];
   }
 
-  var _listGenderText = ["Buddy", "Seeker"];
 
   @override
   Widget build(BuildContext context) {
@@ -74,30 +72,6 @@ class _HomeState extends State<Home> {
           statusBarColor: Colors.black,
         ),
         actions: [
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            child: FlutterToggleTab(
-              width: 30,
-              height: 10,
-              borderRadius: 15,
-              selectedBackgroundColors: [Color.fromRGBO(128, 172, 173, 1)],
-              selectedTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600),
-              unSelectedTextStyle: const TextStyle(
-                  color: Color.fromRGBO(195, 118, 75, 1),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400),
-              labels: _listGenderText,
-              selectedIndex: _tabTextIconIndexSelected,
-              selectedLabelIndex: (index) {
-                setState(() {
-                  _tabTextIconIndexSelected = index;
-                });
-              },
-            ),
-          ),
           GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -146,7 +120,7 @@ class _HomeState extends State<Home> {
           child: Stack(
         children: [
           pageIndex == 0
-              ? buildHome(context)
+              ? OverviewPage()
               : pageIndex == 1
                   ? MapScreen()
                   : ChatOverview(),
@@ -269,60 +243,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Widget buildHome(BuildContext context) {
-    return Container(
-      child: Center(
-          child: ListView(
-        children: [
-          buildBucket(context),
-          buildBucket(context),
-          buildBucket(context),
-          buildBucket(context),
-          buildBucket(context),
-          buildBucket(context),
-        ],
-      )),
-    );
-  }
-
-  Widget buildBucket(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        height: 400,
-        decoration: BoxDecoration(
-            border: Border.all(
-              width: 2,
-              color: Color.fromRGBO(202, 170, 147, 1),
-            ),
-            borderRadius: const BorderRadius.all(const Radius.circular(20))),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topRight: const Radius.circular(20),
-                  topLeft: const Radius.circular(20)),
-              child: Image.asset(
-                "assets/otto.png",
-                height: 200.0,
-                width: double.infinity,
-              ),
-            ),
-            Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const Text(
-                  "Die Otto (GmbH & Co KG) (früher Otto Versand (GmbH & Co), auch Otto Group) ist ein deutsches Handels- und Dienstleistungsunternehmen mit Sitz in Hamburg, das weltweit mit rund 52.000 Mitarbeitern agiert und in den Unternehmensbereichen Einzelhandel, Finanzierung und Logistik sowie Versandhandel aktiv ist.",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'SansSerif',
-                    color: Color.fromRGBO(52, 95, 104, 1),
-                  ),
-                  textAlign: TextAlign.center,
-                ))
-          ],
-        ));
-  }
 
   SafeArea buildMyNavBar(BuildContext context) {
     return SafeArea(

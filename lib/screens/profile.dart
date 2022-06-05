@@ -33,24 +33,11 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String? backgroundImg;
   String? profileImg;
 
   @override
   initState() {
-    getProfilePicture();
     super.initState();
-  }
-
-  void getProfilePicture() async {
-    var downloadURL =
-        await StorageMethods().getProfileBackgroundImg(widget.myUserId);
-
-    if (downloadURL != "") {
-      setState(() {
-        //backgroundImg = downloadURL;
-      });
-    }
   }
 
   @override
@@ -60,14 +47,7 @@ class _EditProfileState extends State<EditProfile> {
         children: [
           Stack(
             children: [
-              backgroundImg != null
-                  ? Image.network(
-                      backgroundImg!,
-                      width: double.infinity,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
+              Container(
                       alignment: Alignment.center,
                       height: 300,
                       width: double.infinity,
