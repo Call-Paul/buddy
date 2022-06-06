@@ -9,20 +9,18 @@ import '../services/storage.dart';
 class DetailsPage extends StatefulWidget {
   String text, link, imgURL, companyId, name;
 
-  DetailsPage({
-    required this.text,
-    required this.link,
-    required this.imgURL,
-    required this.companyId,
-    required this.name
-  });
+  DetailsPage(
+      {required this.text,
+      required this.link,
+      required this.imgURL,
+      required this.companyId,
+      required this.name});
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-
   Stream? buddyStream;
 
   @override
@@ -32,10 +30,8 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   doBeforeLaunch() async {
-      buddyStream =
-      await DataBaseMethods().getBuddysForCompany(widget.companyId);
-      setState((){
-      });
+    buddyStream = await DataBaseMethods().getBuddysForCompany(widget.companyId);
+    setState(() {});
   }
 
   @override
@@ -52,24 +48,26 @@ class _DetailsPageState extends State<DetailsPage> {
               child: Stack(children: [
                 Column(children: [
                   Container(
-                    alignment: Alignment.center,
-                    height: 200,
-                    width: double.infinity,
-                    child: Image.network(
-                      widget.imgURL,
-                      fit: BoxFit.fill,
-                      height: 200.0,
-                      width: double.infinity,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                           Radius.circular(20)
+                          ),
+                      child: Image.network(
+                        widget.imgURL,
+                        fit: BoxFit.fill,
+                        height: 200.0,
+                        width: double.infinity,
+                      ),
+                      // BoxDecoration
                     ),
-                    // BoxDecoration
+                    margin: EdgeInsets.only(left: 10, top: 50, right: 10, bottom: 20),
                   ),
-                  SizedBox(height: 10),
+
                   Container(
                     child: Text(
                       widget.name,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-
                           color: Color.fromRGBO(52, 95, 104, 1),
                           fontSize: 22,
                           letterSpacing: 10),
@@ -93,9 +91,11 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                   InkWell(
                     onTap: () async {
-                      var urllaunchable = await canLaunch(widget.link); //canLaunch is from url_launcher package
-                      if(urllaunchable){
-                        await launch(widget.link); //launch is from url_launcher package to launch URL
+                      var urllaunchable = await canLaunch(
+                          widget.link); //canLaunch is from url_launcher package
+                      if (urllaunchable) {
+                        await launch(widget
+                            .link); //launch is from url_launcher package to launch URL
                       }
                     },
                     child: Container(
@@ -113,8 +113,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       child: const Text(
                         "Jobs",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold), // TextStyle
+                        style:
+                            TextStyle(fontWeight: FontWeight.bold), // TextStyle
                       ), // Text
                     ),
                   ),
@@ -124,13 +124,24 @@ class _DetailsPageState extends State<DetailsPage> {
                   left: 0.0,
                   right: 0.0,
                   child: AppBar(
+                    centerTitle: true,
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back,
                           color: Color.fromRGBO(195, 118, 75, 1)),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     backgroundColor: Colors.transparent,
-                    elevation: 0.0, //No shadow
+                    elevation: 0.0,
+                    title: const Text(
+                      "Informationen",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(52, 95, 104, 1),
+                          fontSize: 22,
+                          letterSpacing: 2
+                      ),
+                      // textAlign: TextAlign.left
+                    ),
                   ),
                 ),
               ]),
@@ -139,10 +150,41 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
         Container(
           child: Scaffold(
-            body: searchUsersList(),
+            body: SafeArea(
+                child: Stack(children: [
+              Column(children: [
+                Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+                    child: searchUsersList())
+              ]),
+              Positioned(
+                top: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: AppBar(
+                  centerTitle: true,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back,
+                        color: Color.fromRGBO(195, 118, 75, 1)),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  title: const Text(
+                    "Buddys",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(52, 95, 104, 1),
+                        fontSize: 22,
+                        letterSpacing: 2),
+                    // textAlign: TextAlign.left
+                  ),
+
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0, //No shadow
+                ),
+              ),
+            ])),
           ),
         ),
-
       ],
     );
   }
@@ -153,32 +195,29 @@ class _DetailsPageState extends State<DetailsPage> {
       builder: (context, snapshot) {
         return snapshot.hasData
             ? ListView.builder(
-          itemCount: (snapshot.data! as QuerySnapshot).docs.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return Container();
-            DocumentSnapshot ds =
-            (snapshot.data! as QuerySnapshot).docs[index];
-            //print(ds["companyId"] == widget.companyId);
-            return SearchListItem(
-              partnerUsername: ds.get("username"),
-            );
-          },
-        )
+                itemCount: (snapshot.data! as QuerySnapshot).docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return Container();
+                  DocumentSnapshot ds =
+                      (snapshot.data! as QuerySnapshot).docs[index];
+                  //print(ds["companyId"] == widget.companyId);
+                  return SearchListItem(
+                    partnerUsername: ds.get("username"),
+                  );
+                },
+              )
             : const Center(child: CircularProgressIndicator());
       },
     );
   }
 }
 
-
-
 class SearchListItem extends StatefulWidget {
   String partnerUsername;
 
-  SearchListItem(
-      {required this.partnerUsername});
+  SearchListItem({required this.partnerUsername});
 
   @override
   _SearchListItemState createState() => _SearchListItemState();
@@ -188,17 +227,17 @@ class _SearchListItemState extends State<SearchListItem> {
   String? profileImg;
   String partnerUserId = "";
 
-  String partnerCompany ="";
+  String partnerCompany = "";
 
   getPartnersCompany() async {
     partnerCompany =
-    await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
+        await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
     setState(() {});
   }
 
   doBeforeInit() async {
     partnerUserId =
-    await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
     await getPartnersCompany();
   }
 
@@ -212,7 +251,6 @@ class _SearchListItemState extends State<SearchListItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-
         /*Navigator.push(
             context,
             MaterialPageRoute(
@@ -260,7 +298,6 @@ class _SearchListItemState extends State<SearchListItem> {
     );
   }
 }
-
 
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
@@ -324,7 +361,7 @@ class _UserImageState extends State<UserImage> {
 
   void getPartnerUserIdAndDownloadImage() async {
     partnerId =
-    await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
     var downloadURL = await StorageMethods().getProfileImg(partnerId);
 
     if (downloadURL != "") {
