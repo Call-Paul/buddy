@@ -1,3 +1,4 @@
+import 'package:buddy/screens/details.dart';
 import 'package:buddy/services/database.dart';
 import 'package:buddy/services/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,7 +12,6 @@ class OverviewPage extends StatefulWidget {
 
 class _OverviewPageState extends State<OverviewPage> {
   Stream? chatStream;
-  String id = "8095ad1f-5255-404f-ad62-0e78ce39adbe";
 
   @override
   void initState() {
@@ -21,9 +21,6 @@ class _OverviewPageState extends State<OverviewPage> {
 
   doBeforeLaunch() async {
     chatStream = await DataBaseMethods().getCompanyList();
-    String downloadUrl = await StorageMethods().getCompanyImage(id);
-    print(downloadUrl);
-
     setState(() {});
   }
 
@@ -45,14 +42,14 @@ class _OverviewPageState extends State<OverviewPage> {
                   itemBuilder: (context, index) {
                     DocumentSnapshot ds =
                         (snapshot.data! as QuerySnapshot).docs[index];
-                    return buildBucket(context, ds["text"], ds["imgURL"], ds["link"]);
+                    return buildBucket(context, ds["text"], ds["imgURL"], ds["link"], ds.id, ds["name"]);
                   },
                 )
               : const Center(child: CircularProgressIndicator());
         });
   }
 
-  Widget buildBucket(BuildContext context, String text, String imgURL, String plink) {
+  Widget buildBucket(BuildContext context, String text, String imgURL, String plink, String companyId, String name) {
     String link = plink;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -97,10 +94,20 @@ class _OverviewPageState extends State<OverviewPage> {
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
             alignment: Alignment.bottomRight,
             child: FloatingActionButton.extended(
-              onPressed: () {},
+              onPressed: () { Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailsPage(
+                        text: text,
+                        link: link,
+                        imgURL: imgURL,
+                        companyId: companyId,
+                        name: name,
+                      )));},
 
               icon: const Icon(Icons.arrow_forward),
               label: Text("Mehr..."),
+              heroTag: null,
               backgroundColor: Color.fromRGBO(95, 152, 161, 1),
             ),
           )

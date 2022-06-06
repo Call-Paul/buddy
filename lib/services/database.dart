@@ -245,4 +245,12 @@ class DataBaseMethods {
         .snapshots();
     return stream;
   }
+
+  Future<Stream<QuerySnapshot>> getBuddysForCompany(String companyId) async{
+      log("DB: getBuddys");
+      return  FirebaseFirestore.instance
+          .collection("users")
+          .where("companyId", isEqualTo: companyId)
+          .snapshots();
+  }
 }
