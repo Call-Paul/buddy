@@ -44,16 +44,6 @@ class DataBaseMethods {
         .set(messageInfo);
   }
 
-  updateLastMessageSend(String chatRoomId, Map<String, dynamic> lastMessageInfo,
-      String myUserId) {
-    log("DB: UpdateLast");
-    return FirebaseFirestore.instance
-        .collection("users")
-        .doc(myUserId)
-        .collection("chats")
-        .doc(chatRoomId)
-        .update(lastMessageInfo);
-  }
 
   createChatRoom(Map<String, dynamic> chatRoomInfoMap, String myUserId,
       String partnerUserId) async {
@@ -246,11 +236,26 @@ class DataBaseMethods {
     return stream;
   }
 
-  Future<Stream<QuerySnapshot>> getBuddysForCompany(String companyId) async{
+  Future<Stream<QuerySnapshot>> getBuddysForCompany(String companyId, String ownId) async{
       log("DB: getBuddys");
       return  FirebaseFirestore.instance
           .collection("users")
           .where("companyId", isEqualTo: companyId)
+          .where("userid", isNotEqualTo: ownId)
           .snapshots();
   }
+
+  Future<String> getFieldFromUser(String field, String userId) async{
+    DocumentSnapshot<Map<String, dynamic>> resultQ = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .get();
+    String result= "";
+    if(resultQ.exists) {
+      result = resultQ.get(field);
+    }
+    return result;
+  }
+
+
 }

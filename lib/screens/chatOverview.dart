@@ -176,8 +176,11 @@ class _ChatState extends State<ChatWidget> {
     DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
     if (t.toDate().day == yesterday.day) {
       lastTimeStamp = "Gestern";
-    } else {
+    } else if (t.toDate().day == yesterday.add(const Duration(days: 1)).day) {
       var format = DateFormat('HH:mm');
+      lastTimeStamp = format.format(t.toDate());
+    }else {
+      var format = DateFormat('dd.MM.yy');
       lastTimeStamp = format.format(t.toDate());
     }
     setState(() {});
