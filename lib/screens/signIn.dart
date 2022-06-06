@@ -2,13 +2,32 @@ import 'package:buddy/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../services/database.dart';
+
 
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
 }
 
+
 class _SignInState extends State<SignIn> {
+
+
+  List<String> companys = List.empty(growable: true);
+
+  @override
+  void initState() {
+    companys.add("Unternehmen");
+    doBeforeLaunch();
+    super.initState();
+  }
+
+  doBeforeLaunch() async {
+    companys = await DataBaseMethods().getAllCompanys();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -57,7 +76,7 @@ class _SignInState extends State<SignIn> {
                   children: [
                     GestureDetector(
                       onTap:() {
-                        AuthMethods().signInWithGoogle(context);
+                        AuthMethods().signInWithGoogle(context, companys);
 
                         },
                       child: Container(

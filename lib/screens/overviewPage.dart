@@ -11,7 +11,7 @@ class OverviewPage extends StatefulWidget {
 }
 
 class _OverviewPageState extends State<OverviewPage> {
-  Stream? chatStream;
+  Stream? companyStream;
 
   @override
   void initState() {
@@ -20,7 +20,7 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   doBeforeLaunch() async {
-    chatStream = await DataBaseMethods().getCompanyList();
+    companyStream = await DataBaseMethods().getCompanyList();
     setState(() {});
   }
 
@@ -33,7 +33,7 @@ class _OverviewPageState extends State<OverviewPage> {
 
   Widget buildHome(BuildContext context) {
     return StreamBuilder(
-        stream: chatStream,
+        stream: companyStream,
         builder: (context, snapshot) {
           return snapshot.hasData
               ? ListView.builder(

@@ -4,14 +4,11 @@ import 'dart:ui';
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/screens/home.dart';
 import 'package:buddy/services/storage.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_dialogs/material_dialogs.dart';
-import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
@@ -19,8 +16,9 @@ import '../services/database.dart';
 
 class CreateProfile extends StatefulWidget {
   final Map<String, dynamic> userInfoMap;
+  List<String> companys;
 
-  CreateProfile(this.userInfoMap);
+  CreateProfile(this.userInfoMap, this.companys);
 
   @override
   _CreateProfile createState() => _CreateProfile();
@@ -35,6 +33,13 @@ class _CreateProfile extends State<CreateProfile> {
   TextEditingController experienceController3 = TextEditingController();
   TextEditingController experienceController4 = TextEditingController();
   List selectedMeetings = [];
+  String dropdownValue = 'Wählen';
+
+  @override
+  void initState() {
+    widget.companys.insert(0, "Wählen");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +76,7 @@ class _CreateProfile extends State<CreateProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 20),
                           child: Column(
                             children: [
@@ -96,7 +101,7 @@ class _CreateProfile extends State<CreateProfile> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 20),
                           child: Column(
                             children: [
@@ -133,15 +138,91 @@ class _CreateProfile extends State<CreateProfile> {
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
-                            borderSide: BorderSide(),
+                            borderSide: const BorderSide(),
                           ),
                           //fillColor: Colors.green
                         ),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: "Poppins",
                         ),
                       ),
                     ),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      const Text(
+                        "Unternehmen: ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SansSerif',
+                          color: Color.fromRGBO(52, 95, 104, 1),
+                        ),
+                      ),
+                      DropdownButton<String>(
+                        value: dropdownValue,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 0,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownValue = newValue!;
+                          });
+                        },
+                        items: widget.companys.map((company) {
+                          return DropdownMenuItem<String>(
+                            value: company,
+                            child: Text(
+                              company,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'SansSerif',
+                                color: const Color.fromRGBO(52, 95, 104, 1),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      const Text(
+                        "Branche: ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SansSerif',
+                          color: Color.fromRGBO(52, 95, 104, 1),
+                        ),
+                      ),
+                      DropdownButton<String>(
+                        value: dropdownValue,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 0,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownValue = newValue!;
+                          });
+                        },
+                        items: widget.companys.map((industry) {
+                          return DropdownMenuItem<String>(
+                            value: industry,
+                            child: Text(
+                              industry,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'SansSerif',
+                                color: const Color.fromRGBO(52, 95, 104, 1),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ]),
                     Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.symmetric(
@@ -159,11 +240,11 @@ class _CreateProfile extends State<CreateProfile> {
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25.0),
-                              borderSide: BorderSide(),
+                              borderSide: const BorderSide(),
                             ),
                             //fillColor: Colors.green
                           ),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: "Poppins",
                           )),
                     ),
@@ -192,11 +273,11 @@ class _CreateProfile extends State<CreateProfile> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    borderSide: BorderSide(),
+                                    borderSide: const BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "Poppins",
                                 )),
                           ),
@@ -217,11 +298,11 @@ class _CreateProfile extends State<CreateProfile> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    borderSide: BorderSide(),
+                                    borderSide: const BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "Poppins",
                                 )),
                           ),
@@ -242,11 +323,11 @@ class _CreateProfile extends State<CreateProfile> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    borderSide: BorderSide(),
+                                    borderSide: const BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "Poppins",
                                 )),
                           ),
@@ -267,11 +348,11 @@ class _CreateProfile extends State<CreateProfile> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    borderSide: BorderSide(),
+                                    borderSide: const BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "Poppins",
                                 )),
                           )
@@ -286,7 +367,7 @@ class _CreateProfile extends State<CreateProfile> {
                       child: Wrap(
                         children: [
                           Container(
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
                             child: OutlinedButton(
                               onPressed: () {
                                 if (selectedMeetings.contains(0)) {
@@ -296,10 +377,10 @@ class _CreateProfile extends State<CreateProfile> {
                                 }
                                 setState(() {});
                               },
-                              child: Text('Unternehmensführung'),
+                              child: const Text('Unternehmensführung'),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: selectedMeetings.contains(0)
-                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    ? const Color.fromRGBO(211, 211, 211, 0.5)
                                     : Colors.transparent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -308,7 +389,7 @@ class _CreateProfile extends State<CreateProfile> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
                             child: OutlinedButton(
                               onPressed: () {
                                 if (selectedMeetings.contains(1)) {
@@ -318,10 +399,10 @@ class _CreateProfile extends State<CreateProfile> {
                                 }
                                 setState(() {});
                               },
-                              child: Text('Treffen'),
+                              child: const Text('Treffen'),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: selectedMeetings.contains(1)
-                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    ? const Color.fromRGBO(211, 211, 211, 0.5)
                                     : Colors.transparent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -330,7 +411,7 @@ class _CreateProfile extends State<CreateProfile> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
                             child: OutlinedButton(
                               onPressed: () {
                                 if (selectedMeetings.contains(2)) {
@@ -340,10 +421,10 @@ class _CreateProfile extends State<CreateProfile> {
                                 }
                                 setState(() {});
                               },
-                              child: Text('Meet-Ups'),
+                              child: const Text('Meet-Ups'),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: selectedMeetings.contains(2)
-                                    ? Color.fromRGBO(211, 211, 211, 0.5)
+                                    ? const Color.fromRGBO(211, 211, 211, 0.5)
                                     : Colors.transparent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -361,6 +442,7 @@ class _CreateProfile extends State<CreateProfile> {
                       child: RaisedButton(
                         onPressed: () async {
                           DateTime now = new DateTime.now();
+                          String companyId = await DataBaseMethods().getCompanyId(dropdownValue);
                           await SharedPreferencesHelper()
                               .saveUserName(usernameController.text);
                           await SharedPreferencesHelper()
@@ -384,6 +466,7 @@ class _CreateProfile extends State<CreateProfile> {
                           Map<String, dynamic> addInformation = {
                             "username": usernameController.text,
                             "startDate": now,
+                            "companyId": companyId,
                             "company": companyController.text,
                             "skills": experienceController1.text +
                                 "|" +
@@ -421,7 +504,8 @@ class _CreateProfile extends State<CreateProfile> {
                                   },
                                   text: 'Später machen',
                                   iconData: Icons.cancel_outlined,
-                                  textStyle: TextStyle(color: Colors.grey),
+                                  textStyle:
+                                      const TextStyle(color: Colors.grey),
                                   iconColor: Colors.grey,
                                 ),
                               ]);

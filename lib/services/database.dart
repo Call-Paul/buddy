@@ -44,7 +44,6 @@ class DataBaseMethods {
         .set(messageInfo);
   }
 
-
   createChatRoom(Map<String, dynamic> chatRoomInfoMap, String myUserId,
       String partnerUserId) async {
     log("DB: createChatRoom");
@@ -89,22 +88,22 @@ class DataBaseMethods {
 
   Future<Map<String, dynamic>> getLastMessageOfChatRoom(
       String chatRoomId) async {
-        QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
+        .instance
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("messages")
         .orderBy("timeStamp", descending: true)
-        .limit(1).get();
+        .limit(1)
+        .get();
 
-        Map<String, dynamic> lastMessage = {};
-        if(result.docs.isNotEmpty) {
-          Map collection = result.docs.first.data();
-          lastMessage["message"] = collection["message"];
-          lastMessage["time"] = collection["timeStamp"];
-
-
-        }
-        return lastMessage;
+    Map<String, dynamic> lastMessage = {};
+    if (result.docs.isNotEmpty) {
+      Map collection = result.docs.first.data();
+      lastMessage["message"] = collection["message"];
+      lastMessage["time"] = collection["timeStamp"];
+    }
+    return lastMessage;
   }
 
   Future<String> getChatRoomIdByUsernames(
@@ -130,11 +129,9 @@ class DataBaseMethods {
     return documentId;
   }
 
-  Future<String> getUserIdByUserName(
-      String userName) async {
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('users')
-        .get();
+  Future<String> getUserIdByUserName(String userName) async {
+    final QuerySnapshot result =
+        await FirebaseFirestore.instance.collection('users').get();
     final List<DocumentSnapshot> documents = result.docs;
 
     String documentId = "";
@@ -178,27 +175,22 @@ class DataBaseMethods {
         .snapshots();
   }
 
-  Future<String> getPartnersCompany(String partnerUsername) async{
+  Future<String> getPartnersCompany(String partnerUsername) async {
     String userId = await getUserIdByUserName(partnerUsername);
-    DocumentSnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(userId)
-        .get();
-    String company= "";
-    if(result.exists) {
+    DocumentSnapshot<Map<String, dynamic>> result =
+        await FirebaseFirestore.instance.collection("users").doc(userId).get();
+    String company = "";
+    if (result.exists) {
       company = result.get("company");
-
     }
     return company;
   }
 
-  Future<String> getUsernameById(String userId) async{
-    DocumentSnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(userId)
-        .get();
-    String username= "";
-    if(result.exists) {
+  Future<String> getUsernameById(String userId) async {
+    DocumentSnapshot<Map<String, dynamic>> result =
+        await FirebaseFirestore.instance.collection("users").doc(userId).get();
+    String username = "";
+    if (result.exists) {
       username = result.get("username");
     }
     return username;
@@ -208,10 +200,8 @@ class DataBaseMethods {
     log("DB: addMeeting");
     var uuidGenerator = const Uuid();
     var uuid = uuidGenerator.v4();
-    final snapshot = await FirebaseFirestore.instance
-        .collection("meetings")
-        .doc(uuid)
-        .get();
+    final snapshot =
+        await FirebaseFirestore.instance.collection("meetings").doc(uuid).get();
     if (snapshot.exists) {
       return true;
     } else {
@@ -223,39 +213,59 @@ class DataBaseMethods {
   }
 
   getMeetingMarker() {
-    final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
-        .collection('meetings')
-        .snapshots();
+    final Stream<QuerySnapshot> stream =
+        FirebaseFirestore.instance.collection('meetings').snapshots();
     return stream;
   }
 
-  getCompanyList () {
-    final Stream<QuerySnapshot> stream = FirebaseFirestore.instance
-        .collection('companys')
-        .snapshots();
+  getCompanyList() {
+    final Stream<QuerySnapshot> stream =
+        FirebaseFirestore.instance.collection('companys').snapshots();
     return stream;
   }
 
-  Future<Stream<QuerySnapshot>> getBuddysForCompany(String companyId, String ownId) async{
-      log("DB: getBuddys");
-      return  FirebaseFirestore.instance
-          .collection("users")
-          .where("companyId", isEqualTo: companyId)
-          .where("userid", isNotEqualTo: ownId)
-          .snapshots();
-  }
-
-  Future<String> getFieldFromUser(String field, String userId) async{
-    DocumentSnapshot<Map<String, dynamic>> resultQ = await FirebaseFirestore.instance
+  Future<Stream<QuerySnapshot>> getBuddysForCompany(
+      String companyId, String ownId) async {
+    log("DB: getBuddys");
+    return FirebaseFirestore.instance
         .collection("users")
-        .doc(userId)
-        .get();
-    String result= "";
-    if(resultQ.exists) {
+        .where("companyId", isEqualTo: companyId)
+        .where("userid", isNotEqualTo: ownId)
+        .snapshots();
+  }
+
+  Future<String> getFieldFromUser(String field, String userId) async {
+    DocumentSnapshot<Map<String, dynamic>> resultQ =
+        await FirebaseFirestore.instance.collection("users").doc(userId).get();
+    String result = "";
+    if (resultQ.exists) {
       result = resultQ.get(field);
     }
     return result;
   }
 
+  getAllCompanys() {
+    getData() async {
+      return await FirebaseFirestore.instance.collection("companys").get();
+    }
 
+    List<String> companys = List.empty(growable: true);
+    getData().then((val) {
+      for (var element in val.docs) {
+        companys.add(element.data()["name"]);
+      }
+    });
+    return companys;
+  }
+
+  getCompanyId(String companyName) async {
+    QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
+        .instance
+        .collection("companys")
+        .where("name", isEqualTo: companyName)
+        .snapshots().first;
+    if(result.docs.first.exists) {
+      return result.docs.first.id;
+    }
+  }
 }
