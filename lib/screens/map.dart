@@ -202,7 +202,7 @@ class _MeetingMapState extends State<MeetingMap> {
               width: 60,
               height: 60,
               builder: (context) => Icon(
-                Icons.handshake_outlined,
+                Icons.location_on_sharp,
                 size: 30,
                 color: Colors.black,
               ),

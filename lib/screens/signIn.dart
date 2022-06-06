@@ -24,17 +24,6 @@ class _SignInState extends State<SignIn> {
               child: Image.asset("assets/top1.png", width: size.width),
             ),
             Positioned(
-              top: 0,
-              left: 0,
-              child: Image.asset("assets/top2.png", width: size.width),
-            ),
-           
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: Image.asset("assets/bottom2.png", width: size.width),
-            ),
-            Positioned(
               top: 15,
               right: 15,
               child: Image.asset("assets/f_logo.png", width: size.width * 0.3),

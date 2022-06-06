@@ -17,6 +17,8 @@ import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
 import '../helperfunctions/sharedpref_helper.dart';
 import '../services/database.dart';
+import '../services/storage.dart';
+import 'chat.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -35,7 +37,9 @@ class _HomeState extends State<Home> {
   String skill4 = "";
 
   TextEditingController topic = TextEditingController();
-  String scannedId ="";
+  String scannedId = "";
+
+  String profileImg = "";
 
   @override
   void initState() {
@@ -43,7 +47,7 @@ class _HomeState extends State<Home> {
 
     stream.listen((NDEFMessage message) {
       scannedId = message.data;
-      showBottomDialog();
+      showBottomDialog_Chooser();
     });
     getDataFromPrefs();
     super.initState();
@@ -62,13 +66,12 @@ class _HomeState extends State<Home> {
     skill4 = array[3];
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(
+        systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.black,
         ),
         actions: [
@@ -129,7 +132,93 @@ class _HomeState extends State<Home> {
     );
   }
 
-  showBottomDialog() async {
+  showBottomDialog_Chooser() async {
+    await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => BottomSheet(
+              builder: (context) => Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                            showBottomDialog_Sharing();
+                          },
+                          child: Wrap(children: [
+                            Column(children: const [
+                              Text(
+                                "Meeting teilen",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SansSerif',
+                                  color: Color.fromRGBO(52, 95, 104, 1),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Icon(
+                                Icons.share,
+                                color: Color.fromRGBO(195, 118, 75, 1),
+                                size: 25,
+                              ),
+                            ]),
+                          ]),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            Navigator.pop(context);
+                            String partnerUsername = await DataBaseMethods()
+                                .getUsernameById(scannedId);
+                            String partnerCompany = await DataBaseMethods()
+                                .getPartnersCompany(partnerUsername);
+                            var skills = await DataBaseMethods()
+                                .getFieldFromUser("skills", scannedId);
+                            var array = skills.split("|");
+
+                            showBottomDialog_connect(
+                                partnerUsername,
+                                partnerCompany,
+                                userId,
+                                userName,
+                                scannedId,
+                                array[0],
+                                array[1],
+                                array[2],
+                                array[3]);
+                          },
+                          child: Wrap(children: [
+                            Column(children: const [
+                              Text(
+                                "Vernetzen",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SansSerif',
+                                  color: Color.fromRGBO(52, 95, 104, 1),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Icon(
+                                Icons.person_add,
+                                color: Color.fromRGBO(195, 118, 75, 1),
+                                size: 25,
+                              ),
+                            ]),
+                          ]),
+                        ),
+                      ],
+                    ),
+                  )),
+              onClosing: () {},
+            ));
+  }
+
+  showBottomDialog_Sharing() async {
     await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -151,7 +240,7 @@ class _HomeState extends State<Home> {
                                   letterSpacing: 8),
                               // textAlign: TextAlign.left
                             ),
-                            margin: EdgeInsets.all(20),
+                            margin: const EdgeInsets.all(20),
                           ),
                           Container(
                             width: 200,
@@ -164,11 +253,11 @@ class _HomeState extends State<Home> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
-                                    borderSide: BorderSide(),
+                                    borderSide: const BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "Poppins",
                                 )),
                           ),
@@ -177,24 +266,30 @@ class _HomeState extends State<Home> {
                             onTap: () async {
                               if (topic.text != "") {
                                 String partnerUsername = "";
-                                if(scannedId != ""){
+                                if (scannedId != "") {
                                   partnerUsername = await DataBaseMethods()
                                       .getUsernameById(scannedId);
                                 }
-                                Position position = await _getGeoLocationPosition();
-                                addMeeting(position.latitude, position.longitude, userName, partnerUsername, topic.text);
+                                Position position =
+                                    await _getGeoLocationPosition();
+                                addMeeting(
+                                    position.latitude,
+                                    position.longitude,
+                                    userName,
+                                    partnerUsername,
+                                    topic.text);
                                 topic.text = "";
                                 Navigator.pop(context);
                               }
                             },
                             child: Container(
-                              margin: EdgeInsets.all(20),
+                              margin: const EdgeInsets.all(20),
                               alignment: Alignment.center,
                               height: 50,
                               width: 300,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(60.0),
-                                color: Color.fromRGBO(202, 170, 147, 1),
+                                color: const Color.fromRGBO(202, 170, 147, 1),
                                 // LinearGradient
                               ),
                               // BoxDecoration
@@ -213,6 +308,250 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
+              onClosing: () {},
+            ));
+  }
+
+  showBottomDialog_connect(
+      String partnerUsername,
+      String partnerCompany,
+      String myUserId,
+      String myUsername,
+      String partnerId,
+      String skill1,
+      String skill2,
+      String skill3,
+      String skill4) async {
+    await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => BottomSheet(
+              builder: (context) => Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Wrap(children: [
+                    Center(
+                      child: Column(children: [
+                        Stack(
+                          children: [
+                            UserImage(
+                              onFileChanged: (profileImg) {
+                                setState(() {});
+                                this.profileImg = profileImg;
+                              },
+                              partnerUsername: partnerUsername,
+                            ),
+                            Center(
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                  SizedBox(height: 100),
+                                  Container(
+                                    child: Text(
+                                      partnerUsername,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(52, 95, 104, 1),
+                                          fontSize: 22,
+                                          letterSpacing: 10),
+                                      // textAlign: TextAlign.left
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      partnerCompany,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromRGBO(52, 95, 104, 1),
+                                          fontSize: 12,
+                                          letterSpacing: 18),
+                                      // textAlign: TextAlign.left
+                                    ),
+                                  ),
+                                  skill1 != ""
+                                      ? Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 30),
+                                          child: Text(
+                                            "• ${skill1}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    52, 95, 104, 1),
+                                                fontSize: 16,
+                                                letterSpacing: 2),
+                                            // textAlign: TextAlign.left
+                                          ),
+                                        )
+                                      : Container(),
+                                  skill2 != ""
+                                      ? Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            "• ${skill2}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    52, 95, 104, 1),
+                                                fontSize: 16,
+                                                letterSpacing: 2),
+                                            // textAlign: TextAlign.left
+                                          ),
+                                        )
+                                      : Container(),
+                                  skill3 != ""
+                                      ? Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            "• ${skill3}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    52, 95, 104, 1),
+                                                fontSize: 16,
+                                                letterSpacing: 2),
+                                            // textAlign: TextAlign.left
+                                          ),
+                                        )
+                                      : Container(),
+                                  skill4 != ""
+                                      ? Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            "• ${skill4}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    52, 95, 104, 1),
+                                                fontSize: 16,
+                                                letterSpacing: 2),
+                                            // textAlign: TextAlign.left
+                                          ),
+                                        )
+                                      : Container(),
+                                  Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      alignment: Alignment.center,
+                                      color: Colors.transparent,
+                                      child: Wrap(children: [
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          child: OutlinedButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              'Treffen',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      52, 95, 104, 1)),
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          child: OutlinedButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              'Meet-Ups',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      52, 95, 104, 1)),
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          child: OutlinedButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              'Unternehmensführung',
+                                              style: TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      52, 95, 104, 1)),
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ])),
+                                  InkWell(
+                                    onTap: () async {
+                                      Map<String, dynamic> chatRoomInfoMap = {
+                                        "users": [myUsername, partnerUsername]
+                                      };
+                                      if (await DataBaseMethods()
+                                              .getChatRoomIdByUsernames(
+                                                  partnerUsername,
+                                                  myUsername,
+                                                  myUserId) ==
+                                          "") {
+                                        DataBaseMethods().createChatRoom(
+                                            chatRoomInfoMap,
+                                            myUserId,
+                                            partnerId);
+                                      }
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Chat(partnerUsername)));
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(60.0),
+                                        color: Color.fromRGBO(202, 170, 147, 1),
+                                        // LinearGradient
+                                      ),
+                                      // BoxDecoration
+                                      padding: const EdgeInsets.all(0),
+                                      child: const Text(
+                                        "Chat starten",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight:
+                                                FontWeight.bold), // TextStyle
+                                      ), // Text
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  )
+                                ]))
+                          ],
+                        ),
+                      ]),
+                    )
+                  ])),
               onClosing: () {},
             ));
   }
@@ -242,7 +581,6 @@ class _HomeState extends State<Home> {
       return position;
     }
   }
-
 
   SafeArea buildMyNavBar(BuildContext context) {
     return SafeArea(
@@ -320,5 +658,79 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+}
+
+class UserImage extends StatefulWidget {
+  final Function(String profileImg) onFileChanged;
+
+  String partnerUsername;
+
+  UserImage({required this.onFileChanged, required this.partnerUsername});
+
+  @override
+  _UserImageState createState() => _UserImageState();
+}
+
+class _UserImageState extends State<UserImage> {
+  String? profileImg;
+  String partnerId = "";
+
+  @override
+  void initState() {
+    getPartnerUserIdAndDownloadImage();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Column(children: [
+        if (profileImg == null)
+          SizedBox(
+              height: 70,
+              width: 70,
+              child: Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Color.fromRGBO(52, 95, 104, 1),
+                      child: Text(widget.partnerUsername[0]),
+                    ),
+                  ])),
+        if (profileImg != null)
+          InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: SizedBox(
+                height: 70,
+                width: 70,
+                child: Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      CircleAvatar(
+                          backgroundColor: Color.fromRGBO(52, 95, 104, 1),
+                          backgroundImage: Image.network(profileImg!).image),
+                    ])), // AppRoundImage.url
+          ),
+      ]),
+    );
+  }
+
+  void getPartnerUserIdAndDownloadImage() async {
+    partnerId =
+        await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
+    var downloadURL = await StorageMethods().getProfileImg(partnerId);
+
+    if (downloadURL != "") {
+      setState(() {
+        profileImg = downloadURL;
+      });
+      widget.onFileChanged(profileImg!);
+    }
   }
 }
