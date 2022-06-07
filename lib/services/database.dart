@@ -163,6 +163,8 @@ class DataBaseMethods {
           DateTime.parse(data["startDate"].toDate().toString()));
       await SharedPreferencesHelper().saveUserId(data["userid"]);
       await SharedPreferencesHelper().saveUserName(data["username"]);
+      await SharedPreferencesHelper().saveUserMode(data["userMode"]);
+
     }
   }
 
@@ -230,6 +232,7 @@ class DataBaseMethods {
         .collection("users")
         .where("companyId", isEqualTo: companyId)
         .where("userid", isNotEqualTo: ownId)
+        .where("userMode", isEqualTo: true)
         .snapshots();
   }
 
@@ -239,6 +242,7 @@ class DataBaseMethods {
         .collection("users")
         .where("industryId", isEqualTo: companyId)
         .where("userid", isNotEqualTo: ownId)
+        .where("userMode", isEqualTo: true)
         .snapshots();
   }
 
@@ -306,5 +310,14 @@ class DataBaseMethods {
     if(result.docs.first.exists) {
       return result.docs.first.id;
     }
+  }
+
+  setMode(int index, String userId) {
+    Map<String, bool> userInfoMap = Map();
+    userInfoMap["userMode"] = index == 0 ? true: false;
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .update(userInfoMap);
   }
 }

@@ -38,6 +38,8 @@ class _HomeState extends State<Home> {
   String skill4 = "";
   String startDate = "";
   int mode = 1;
+  int _tabTextIconIndexSelected = 0;
+  var toggleListText = ["Buddy", "Seeker"];
 
   TextEditingController topic = TextEditingController();
   String scannedId = "";
@@ -61,6 +63,8 @@ class _HomeState extends State<Home> {
     userId = (await SharedPreferencesHelper().getUserId())!;
     company = (await SharedPreferencesHelper().getUserCompany())!;
     userName = (await SharedPreferencesHelper().getUserName())!;
+    bool mode = (await SharedPreferencesHelper().getUserMode())!;
+    _tabTextIconIndexSelected = mode == true ? 0 : 1;
     var format = DateFormat('dd.MM.yy');
     startDate = format.format((await SharedPreferencesHelper().getUserStartDate())!);
     String skills = (await SharedPreferencesHelper().getUserSkills())!;
@@ -69,6 +73,7 @@ class _HomeState extends State<Home> {
     skill2 = array[1];
     skill3 = array[2];
     skill4 = array[3];
+    setState((){});
   }
 
   @override
@@ -78,7 +83,7 @@ class _HomeState extends State<Home> {
         value: mode,
           onResult: (result) {
             mode = result;
-            _notifier.value = mode;;
+            _notifier.value = mode;
             setState((){});
           }
       ),
@@ -87,6 +92,32 @@ class _HomeState extends State<Home> {
           statusBarColor: Colors.black,
         ),
         actions: [
+          Container(
+          margin: EdgeInsets.symmetric(vertical: 10),
+          child: FlutterToggleTab(
+            width: 30,
+            height: 10,
+            borderRadius: 15,
+            selectedBackgroundColors: [Color.fromRGBO(128, 172, 173, 1)],
+            selectedTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w600),
+            unSelectedTextStyle: const TextStyle(
+                color: Color.fromRGBO(195, 118, 75, 1),
+                fontSize: 10,
+                fontWeight: FontWeight.w400),
+            labels: toggleListText,
+            selectedIndex: _tabTextIconIndexSelected,
+            selectedLabelIndex: (index) {
+              setState(() {
+                _tabTextIconIndexSelected = index;
+                DataBaseMethods().setMode(index, userId);
+                SharedPreferencesHelper().saveUserMode(index == 1? false : true);
+              });
+            },
+          ),
+        ),
           GestureDetector(
               onTap: () {
                 Navigator.push(

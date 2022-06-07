@@ -420,6 +420,7 @@ class _CreateProfile extends State<CreateProfile> {
                           String industryId = industryChooser != "Wählen" ? await DataBaseMethods().getIndustryId(industryChooser) : "";
                           await SharedPreferencesHelper()
                               .saveUserName(usernameController.text);
+                          await SharedPreferencesHelper().saveUserMode(false);
                           await SharedPreferencesHelper()
                               .saveUserStartDate(now);
                           await SharedPreferencesHelper()
@@ -441,6 +442,7 @@ class _CreateProfile extends State<CreateProfile> {
                           Map<String, dynamic> addInformation = {
                             "username": usernameController.text,
                             "startDate": now,
+                            "userMode": false,
                             "companyId": companyId,
                             "industryId" : industryId,
                             "company": companyChooser != "Wählen" ? companyChooser : "",
