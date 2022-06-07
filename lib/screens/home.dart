@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:material_dialogs/material_dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
@@ -35,6 +36,7 @@ class _HomeState extends State<Home> {
   String skill2 = "";
   String skill3 = "";
   String skill4 = "";
+  String startDate = "";
   int mode = 1;
 
   TextEditingController topic = TextEditingController();
@@ -59,6 +61,8 @@ class _HomeState extends State<Home> {
     userId = (await SharedPreferencesHelper().getUserId())!;
     company = (await SharedPreferencesHelper().getUserCompany())!;
     userName = (await SharedPreferencesHelper().getUserName())!;
+    var format = DateFormat('dd.MM.yy');
+    startDate = format.format((await SharedPreferencesHelper().getUserStartDate())!);
     String skills = (await SharedPreferencesHelper().getUserSkills())!;
     var array = skills.split("|");
     skill1 = array[0];
@@ -97,6 +101,7 @@ class _HomeState extends State<Home> {
                               skill2: skill2,
                               skill3: skill3,
                               skill4: skill4,
+                              startDate: startDate
                             )));
               },
               child: Container(
@@ -199,7 +204,8 @@ class _HomeState extends State<Home> {
                                 array[0],
                                 array[1],
                                 array[2],
-                                array[3]);
+                                array[3],
+                                startDate);
                           },
                           child: Wrap(children: [
                             Column(children: const [
@@ -331,7 +337,8 @@ class _HomeState extends State<Home> {
       String skill1,
       String skill2,
       String skill3,
-      String skill4) async {
+      String skill4,
+      String startDate) async {
     await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -509,6 +516,18 @@ class _HomeState extends State<Home> {
                                           ),
                                         ),
                                       ])),
+                                      Container(
+                                        margin: const EdgeInsets.only(bottom: 20),
+                                        child: Text(
+                                          "Dabei seit dem ${startDate}",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color.fromRGBO(52, 95, 104, 1),
+                                              fontSize: 16,
+                                              letterSpacing: 2),
+                                          // textAlign: TextAlign.left
+                                        ),
+                                      ),
                                   InkWell(
                                     onTap: () async {
                                       Map<String, dynamic> chatRoomInfoMap = {

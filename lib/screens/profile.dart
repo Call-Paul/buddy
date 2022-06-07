@@ -16,7 +16,8 @@ class EditProfile extends StatefulWidget {
       skill1,
       skill2,
       skill3,
-      skill4;
+      skill4,
+      startDate;
 
   EditProfile(
       {required this.myDisplayName,
@@ -26,7 +27,8 @@ class EditProfile extends StatefulWidget {
       required this.skill1,
       required this.skill2,
       required this.skill3,
-      required this.skill4});
+      required this.skill4,
+      required this.startDate});
 
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -158,7 +160,7 @@ class _EditProfileState extends State<EditProfile> {
                             : Container(),
                         Container(
                           margin:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                              EdgeInsets.only(left: 20,right: 20,top: 20, bottom: 10),
                           alignment: Alignment.center,
                           color: Colors.transparent,
                           child: Wrap(
@@ -215,6 +217,18 @@ class _EditProfileState extends State<EditProfile> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 10, bottom: 20),
+                          child: Text(
+                            "Dabei seit dem ${widget.startDate}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(52, 95, 104, 1),
+                                fontSize: 16,
+                                letterSpacing: 2),
+                            // textAlign: TextAlign.left
                           ),
                         ),
 
