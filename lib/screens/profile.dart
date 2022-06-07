@@ -311,12 +311,7 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(52, 95, 104, 1),
-                      child: Text(widget.name == ""
-                          ? widget.name.substring(1)
-                          : widget.name.substring(0, 1) +
-                              widget.name.substring(
-                                  widget.name.lastIndexOf(' ') + 1,
-                                  widget.name.lastIndexOf(' ') + 2)),
+                      child: Text(widget.name.substring(1)),
                     ),
                   ])),
         if (profileImg != null)
