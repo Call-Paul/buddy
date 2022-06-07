@@ -268,4 +268,10 @@ class DataBaseMethods {
       return result.docs.first.id;
     }
   }
+
+  getIndustryList() {
+    final Stream<QuerySnapshot> stream =
+    FirebaseFirestore.instance.collection('industry').snapshots();
+    return stream;
+  }
 }

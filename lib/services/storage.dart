@@ -27,9 +27,10 @@ class StorageMethods {
   }
 
   Future<String> getCompanyImage(String companyId) async {
-    var storageRef = storage.child("companys/${companyId}.jpg");
+    var storageRef = storage.child("industrys/${companyId}.jpg");
     try {
       var downloadUrl = await storageRef.getDownloadURL();
+      print(downloadUrl);
       return downloadUrl;
     } catch (err) {
       return "";

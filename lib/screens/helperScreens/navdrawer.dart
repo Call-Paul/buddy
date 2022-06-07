@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 class NavDrawer extends StatefulWidget {
 
+  final ValueChanged onResult;
+   int value;
+   NavDrawer({required this.onResult, required this.value});
 
   @override
   _NavDrawer createState() => _NavDrawer();
@@ -9,7 +12,7 @@ class NavDrawer extends StatefulWidget {
 
 class _NavDrawer extends State<NavDrawer> {
 
-  int _value = 0;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -32,13 +35,15 @@ class _NavDrawer extends State<NavDrawer> {
             InkWell(
               onTap: (){
                 setState(() {
-                  _value = 0;
+                  widget.value = 0;
+                  widget.onResult(0);
+                  Navigator.pop(context);
                 });
               },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: _value == 0 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
+                  color: widget.value == 0 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 // BoxDecoration
@@ -63,7 +68,7 @@ class _NavDrawer extends State<NavDrawer> {
                           color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
-                      child: _value == 0
+                      child: widget.value == 0
                           ? Container(
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(
@@ -100,13 +105,15 @@ class _NavDrawer extends State<NavDrawer> {
             InkWell(
               onTap: (){
                 setState(() {
-                  _value = 1;
+                  widget.value = 1;
+                  widget.onResult(1);
+                  Navigator.pop(context);
                 });
               },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: _value == 1 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
+                  color: widget.value == 1 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
@@ -130,7 +137,7 @@ class _NavDrawer extends State<NavDrawer> {
                           color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
-                      child: _value == 1
+                      child: widget.value == 1
                           ? Container(
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(
@@ -167,13 +174,15 @@ class _NavDrawer extends State<NavDrawer> {
             InkWell(
               onTap: (){
                 setState(() {
-                  _value = 2;
+                  widget.value = 2;
+                  widget.onResult(2);
+                  Navigator.pop(context);
                 });
               },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: _value == 2 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
+                  color: widget.value == 2 ? const Color.fromRGBO(211, 211, 211, 0.3) : Colors.transparent,
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
@@ -197,7 +206,7 @@ class _NavDrawer extends State<NavDrawer> {
                           color: Color.fromRGBO(52, 95, 104, 1),
                         )),
                     Container(
-                      child: _value == 2
+                      child: widget.value == 2
                           ? Container(
                               margin: const EdgeInsets.only(left: 30),
                               decoration: const BoxDecoration(

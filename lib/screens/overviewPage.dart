@@ -6,12 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OverviewPage extends StatefulWidget {
+  int mode;
+  OverviewPage({required this.mode});
+
   @override
   _OverviewPageState createState() => _OverviewPageState();
 }
 
 class _OverviewPageState extends State<OverviewPage> {
-  Stream? companyStream;
+  Stream? informationStream;
 
   @override
   void initState() {
@@ -20,12 +23,17 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   doBeforeLaunch() async {
-    companyStream = await DataBaseMethods().getCompanyList();
+    if(widget.mode == 1){
+      informationStream = await DataBaseMethods().getCompanyList();
+    }else if ( widget.mode == 2){
+      informationStream = await DataBaseMethods().getIndustryList();
+    }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    doBeforeLaunch();
     return Scaffold(
       body: buildHome(context),
     );
@@ -33,7 +41,7 @@ class _OverviewPageState extends State<OverviewPage> {
 
   Widget buildHome(BuildContext context) {
     return StreamBuilder(
-        stream: companyStream,
+        stream: informationStream,
         builder: (context, snapshot) {
           return snapshot.hasData
               ? ListView.builder(
@@ -101,8 +109,9 @@ class _OverviewPageState extends State<OverviewPage> {
                         text: text,
                         link: link,
                         imgURL: imgURL,
-                        companyId: companyId,
+                        Id: companyId,
                         name: name,
+                        mode: widget.mode,
                       )));},
 
               icon: const Icon(Icons.arrow_forward),

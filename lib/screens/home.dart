@@ -35,11 +35,12 @@ class _HomeState extends State<Home> {
   String skill2 = "";
   String skill3 = "";
   String skill4 = "";
+  int mode = 1;
 
   TextEditingController topic = TextEditingController();
   String scannedId = "";
-
   String profileImg = "";
+  ValueNotifier<int> _notifier = ValueNotifier(1);
 
   @override
   void initState() {
@@ -69,7 +70,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawer(),
+      drawer: NavDrawer(
+        value: mode,
+          onResult: (result) {
+            mode = result;
+            _notifier.value = mode;;
+            setState((){});
+          }
+      ),
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.black,
@@ -123,7 +131,9 @@ class _HomeState extends State<Home> {
           child: Stack(
         children: [
           pageIndex == 0
-              ? OverviewPage()
+              ? ValueListenableBuilder<int>(valueListenable: _notifier, builder: (context, value, _){
+                return OverviewPage(mode: value);
+          })
               : pageIndex == 1
                   ? MapScreen()
                   : ChatOverview(),

@@ -10,14 +10,16 @@ import '../services/storage.dart';
 import 'chat.dart';
 
 class DetailsPage extends StatefulWidget {
-  String text, link, imgURL, companyId, name;
+  String text, link, imgURL, Id, name;
+  int mode;
 
   DetailsPage(
       {required this.text,
       required this.link,
       required this.imgURL,
-      required this.companyId,
-      required this.name});
+      required this.Id,
+      required this.name,
+      required this.mode});
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
@@ -35,7 +37,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   doBeforeLaunch() async {
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-    buddyStream = await DataBaseMethods().getBuddysForCompany(widget.companyId, myUserId);
+    buddyStream = await DataBaseMethods().getBuddysForCompany(widget.Id, myUserId);
     setState(() {});
   }
 
@@ -113,8 +115,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                       // BoxDecoration
                       padding: const EdgeInsets.all(0),
-                      child: const Text(
-                        "Jobs",
+                      child: Text(
+                        (widget.mode == 2 ? "Mehr Informationen": "Jobs"),
                         textAlign: TextAlign.center,
                         style:
                             TextStyle(fontWeight: FontWeight.bold), // TextStyle
