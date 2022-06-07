@@ -97,7 +97,7 @@ class _EditProfileState extends State<EditProfile> {
                                 color: Color.fromRGBO(52, 95, 104, 1),
                                 fontSize: 12,
                                 letterSpacing: 18),
-                            // textAlign: TextAlign.left
+                             textAlign: TextAlign.center
                           ),
                         ),
                         widget.skill1 != ""
@@ -311,7 +311,7 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(52, 95, 104, 1),
-                      child: Text(widget.name.substring(1)),
+                      child: Text(widget.name.substring(0, widget.name.contains(" ") ? widget.name.indexOf(" "): widget.name.length)),
                     ),
                   ])),
         if (profileImg != null)

@@ -37,7 +37,12 @@ class _DetailsPageState extends State<DetailsPage> {
 
   doBeforeLaunch() async {
     myUserId = (await SharedPreferencesHelper().getUserId())!;
-    buddyStream = await DataBaseMethods().getBuddysForCompany(widget.Id, myUserId);
+    if(widget.mode == 1){
+      buddyStream = await DataBaseMethods().getBuddysForCompany(widget.Id, myUserId);
+    }else if(widget.mode == 2){
+      buddyStream = await DataBaseMethods().getBuddysForIndustry(widget.Id, myUserId);
+
+    }
     setState(() {});
   }
 
@@ -579,7 +584,7 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(52, 95, 104, 1),
-                      child: Text(widget.partnerUsername[0]),
+                      child: Text(widget.partnerUsername[0].substring(0, widget.partnerUsername[0].contains(" ") ? widget.partnerUsername[0].indexOf(" "): widget.partnerUsername[0].length)),
                     ),
                   ])),
         if (profileImg != null)

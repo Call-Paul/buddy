@@ -283,7 +283,7 @@ class _UserImageState extends State<UserImage> {
                     CircleAvatar(
                       backgroundColor: Colors.black87,
                       child: Text(
-                           widget.partnerUsername.substring(1)
+                          widget.partnerUsername.substring(0, widget.partnerUsername.contains(" ") ? widget.partnerUsername.indexOf(" "): widget.partnerUsername.length)
                           ),
                     ),
                   ])),

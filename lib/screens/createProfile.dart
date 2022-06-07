@@ -17,8 +17,9 @@ import '../services/database.dart';
 class CreateProfile extends StatefulWidget {
   final Map<String, dynamic> userInfoMap;
   List<String> companys;
+  List<String> industrys;
 
-  CreateProfile(this.userInfoMap, this.companys);
+  CreateProfile(this.userInfoMap, this.companys, this.industrys);
 
   @override
   _CreateProfile createState() => _CreateProfile();
@@ -27,25 +28,23 @@ class CreateProfile extends StatefulWidget {
 class _CreateProfile extends State<CreateProfile> {
   String profileImg = "";
   TextEditingController usernameController = TextEditingController();
-  TextEditingController companyController = TextEditingController();
   TextEditingController experienceController1 = TextEditingController();
   TextEditingController experienceController2 = TextEditingController();
   TextEditingController experienceController3 = TextEditingController();
   TextEditingController experienceController4 = TextEditingController();
   List selectedMeetings = [];
-  String dropdownValue = 'Wählen';
+  String companyChooser = 'Wählen';
+  String industryChooser = 'Wählen';
 
   @override
   void initState() {
     widget.companys.insert(0, "Wählen");
+    widget.industrys.insert(0, "Wählen");
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    companyController.addListener(() {
-      setState(() {});
-    });
     usernameController.addListener(() {
       setState(() {});
     });
@@ -158,7 +157,7 @@ class _CreateProfile extends State<CreateProfile> {
                         ),
                       ),
                       DropdownButton<String>(
-                        value: dropdownValue,
+                        value: companyChooser,
                         elevation: 16,
                         style: const TextStyle(color: Colors.deepPurple),
                         underline: Container(
@@ -166,7 +165,7 @@ class _CreateProfile extends State<CreateProfile> {
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            dropdownValue = newValue!;
+                            companyChooser = newValue!;
                           });
                         },
                         items: widget.companys.map((company) {
@@ -196,7 +195,7 @@ class _CreateProfile extends State<CreateProfile> {
                         ),
                       ),
                       DropdownButton<String>(
-                        value: dropdownValue,
+                        value: industryChooser,
                         elevation: 16,
                         style: const TextStyle(color: Colors.deepPurple),
                         underline: Container(
@@ -204,10 +203,10 @@ class _CreateProfile extends State<CreateProfile> {
                         ),
                         onChanged: (String? newValue) {
                           setState(() {
-                            dropdownValue = newValue!;
+                            industryChooser = newValue!;
                           });
                         },
-                        items: widget.companys.map((industry) {
+                        items: widget.industrys.map((industry) {
                           return DropdownMenuItem<String>(
                             value: industry,
                             child: Text(
@@ -223,31 +222,6 @@ class _CreateProfile extends State<CreateProfile> {
                         }).toList(),
                       ),
                     ]),
-                    Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.1,
-                          vertical: size.height * 0.01),
-                      child: TextFormField(
-                          maxLength: 30,
-                          controller: companyController,
-                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                          decoration: InputDecoration(
-                            counterText: companyController.text.length < 20
-                                ? ''
-                                : '${companyController.text.length}/30',
-                            labelText: "Unternehmen",
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                              borderSide: const BorderSide(),
-                            ),
-                            //fillColor: Colors.green
-                          ),
-                          style: const TextStyle(
-                            fontFamily: "Poppins",
-                          )),
-                    ),
                     Container(
                       margin: EdgeInsets.symmetric(
                           horizontal: size.width * 0.1,
@@ -442,13 +416,14 @@ class _CreateProfile extends State<CreateProfile> {
                       child: RaisedButton(
                         onPressed: () async {
                           DateTime now = new DateTime.now();
-                          String companyId = await DataBaseMethods().getCompanyId(dropdownValue);
+                          String companyId = companyChooser != "Wählen" ? await DataBaseMethods().getCompanyId(companyChooser) : "";
+                          String industryId = industryChooser != "Wählen" ? await DataBaseMethods().getIndustryId(industryChooser) : "";
                           await SharedPreferencesHelper()
                               .saveUserName(usernameController.text);
                           await SharedPreferencesHelper()
                               .saveUserStartDate(now);
                           await SharedPreferencesHelper()
-                              .saveUserCompany(companyController.text);
+                              .saveUserCompany(companyChooser);
                           await SharedPreferencesHelper().saveUserGuide(
                               selectedMeetings.contains(0) ? "true" : "false");
                           await SharedPreferencesHelper().saveUserMeet(
@@ -467,7 +442,8 @@ class _CreateProfile extends State<CreateProfile> {
                             "username": usernameController.text,
                             "startDate": now,
                             "companyId": companyId,
-                            "company": companyController.text,
+                            "industryId" : industryId,
+                            "company": companyChooser != "Wählen" ? companyChooser : "",
                             "skills": experienceController1.text +
                                 "|" +
                                 experienceController2.text +
@@ -607,7 +583,7 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.black87,
-                      child: Text(widget.name.substring(1)),
+                      child: Text(widget.name.substring(0, widget.name.contains(" ") ? widget.name.indexOf(" "): widget.name.length)),
                     ),
                     Positioned(
                         bottom: 0,

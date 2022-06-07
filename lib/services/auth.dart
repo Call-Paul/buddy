@@ -19,7 +19,7 @@ class AuthMethods {
     return await auth.currentUser;
   }
 
-  signInWithGoogle(BuildContext context, List<String> companys) async {
+  signInWithGoogle(BuildContext context, List<String> companys, List<String> industrys) async {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -65,7 +65,7 @@ class AuthMethods {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CreateProfile(userInfoMap, companys)))
+                        builder: (context) => CreateProfile(userInfoMap, companys, industrys)))
               }
           });
     }

@@ -78,7 +78,7 @@ class _MeetingMapState extends State<MeetingMap> {
       mapController: _mapController,
       options: MapOptions(
         center: LatLng(53.5754728,9.9876184),
-
+          interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
         onMapCreated: (controller) {
           if (mounted) {
             _getGeoLocationPosition(controller);
@@ -96,7 +96,6 @@ class _MeetingMapState extends State<MeetingMap> {
           minZoom: 2,
           maxZoom: 18,
           backgroundColor: Colors.black,
-          // errorImage: ,
           urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: ['a', 'b', 'c'],
         ),

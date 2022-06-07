@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    Stream<NDEFMessage> stream = NFC.readNDEF();
+    Stream<NDEFMessage> stream = NFC.readNDEF(once: false, readerMode: NFCDispatchReaderMode());
 
     stream.listen((NDEFMessage message) {
       scannedId = message.data;
@@ -708,7 +708,7 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Color.fromRGBO(52, 95, 104, 1),
-                      child: Text(widget.partnerUsername[0]),
+                      child: Text(widget.partnerUsername[0].substring(0, widget.partnerUsername[0].contains(" ") ? widget.partnerUsername[0].indexOf(" "): widget.partnerUsername[0].length)),
                     ),
                   ])),
         if (profileImg != null)

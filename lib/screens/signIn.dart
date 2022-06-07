@@ -15,16 +15,21 @@ class _SignInState extends State<SignIn> {
 
 
   List<String> companys = List.empty(growable: true);
+  List<String> industrys = List.empty(growable: true);
+
 
   @override
   void initState() {
     companys.add("Unternehmen");
+    companys.add("Branchen");
     doBeforeLaunch();
     super.initState();
   }
 
   doBeforeLaunch() async {
     companys = await DataBaseMethods().getAllCompanys();
+    industrys = await DataBaseMethods().getAllIndustrys();
+
     setState(() {});
   }
 
@@ -76,7 +81,7 @@ class _SignInState extends State<SignIn> {
                   children: [
                     GestureDetector(
                       onTap:() {
-                        AuthMethods().signInWithGoogle(context, companys);
+                        AuthMethods().signInWithGoogle(context, companys, industrys);
 
                         },
                       child: Container(

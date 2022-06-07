@@ -226,10 +226,18 @@ class DataBaseMethods {
 
   Future<Stream<QuerySnapshot>> getBuddysForCompany(
       String companyId, String ownId) async {
-    log("DB: getBuddys");
     return FirebaseFirestore.instance
         .collection("users")
         .where("companyId", isEqualTo: companyId)
+        .where("userid", isNotEqualTo: ownId)
+        .snapshots();
+  }
+
+  Future<Stream<QuerySnapshot>> getBuddysForIndustry(
+      String companyId, String ownId) async {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .where("industryId", isEqualTo: companyId)
         .where("userid", isNotEqualTo: ownId)
         .snapshots();
   }
@@ -273,5 +281,30 @@ class DataBaseMethods {
     final Stream<QuerySnapshot> stream =
     FirebaseFirestore.instance.collection('industry').snapshots();
     return stream;
+  }
+
+  getAllIndustrys() {
+    getData() async {
+      return await FirebaseFirestore.instance.collection("industry").get();
+    }
+
+    List<String> industrys = List.empty(growable: true);
+    getData().then((val) {
+      for (var element in val.docs) {
+        industrys.add(element.data()["name"]);
+      }
+    });
+    return industrys;
+  }
+
+  getIndustryId(String industryName)async {
+    QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
+        .instance
+        .collection("industry")
+        .where("name", isEqualTo: industryName)
+        .snapshots().first;
+    if(result.docs.first.exists) {
+      return result.docs.first.id;
+    }
   }
 }
