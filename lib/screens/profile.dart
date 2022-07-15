@@ -8,6 +8,13 @@ import 'package:image_picker/image_picker.dart';
 import '../services/auth.dart';
 import '../services/storage.dart';
 
+/**
+ * Diese Klasse erzeugt das Fesnter um das eigene Profil anzuzeigen.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class EditProfile extends StatefulWidget {
   String myDisplayName,
       userName,
@@ -84,7 +91,7 @@ class _EditProfileState extends State<EditProfile> {
                             widget.userName,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(52, 95, 104, 1),
+                                color: Color.fromRGBO(0, 48,99,1),
                                 fontSize: 22,
                                 letterSpacing: 10),
                             // textAlign: TextAlign.left
@@ -96,7 +103,7 @@ class _EditProfileState extends State<EditProfile> {
                             widget.company,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(52, 95, 104, 1),
+                                color: Color.fromRGBO(0, 48,99,1),
                                 fontSize: 12,
                                 letterSpacing: 18),
                              textAlign: TextAlign.center
@@ -109,7 +116,7 @@ class _EditProfileState extends State<EditProfile> {
                                   "• ${widget.skill1}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(52, 95, 104, 1),
+                                      color: Color.fromRGBO(0, 48,99,1),
                                       fontSize: 16,
                                       letterSpacing: 2),
                                   // textAlign: TextAlign.left
@@ -123,7 +130,7 @@ class _EditProfileState extends State<EditProfile> {
                                   "• ${widget.skill2}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(52, 95, 104, 1),
+                                      color: Color.fromRGBO(0, 48,99,1),
                                       fontSize: 16,
                                       letterSpacing: 2),
                                   // textAlign: TextAlign.left
@@ -137,7 +144,7 @@ class _EditProfileState extends State<EditProfile> {
                                   "• ${widget.skill3}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(52, 95, 104, 1),
+                                      color: Color.fromRGBO(0, 48,99,1),
                                       fontSize: 16,
                                       letterSpacing: 2),
                                   // textAlign: TextAlign.left
@@ -151,7 +158,7 @@ class _EditProfileState extends State<EditProfile> {
                                   "• ${widget.skill4}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(52, 95, 104, 1),
+                                      color: Color.fromRGBO(0, 48,99,1),
                                       fontSize: 16,
                                       letterSpacing: 2),
                                   // textAlign: TextAlign.left
@@ -172,7 +179,7 @@ class _EditProfileState extends State<EditProfile> {
                                   child: Text(
                                     'Treffen',
                                     style: TextStyle(
-                                        color: Color.fromRGBO(52, 95, 104, 1)),
+                                        color: Color.fromRGBO(0, 48,99,1)),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -189,7 +196,7 @@ class _EditProfileState extends State<EditProfile> {
                                   child: Text(
                                     'Meet-Ups',
                                     style: TextStyle(
-                                        color: Color.fromRGBO(52, 95, 104, 1)),
+                                        color: Color.fromRGBO(0, 48,99,1)),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -206,7 +213,7 @@ class _EditProfileState extends State<EditProfile> {
                                   child: Text(
                                     'Unternehmensführung',
                                     style: TextStyle(
-                                        color: Color.fromRGBO(52, 95, 104, 1)),
+                                        color: Color.fromRGBO(0, 48,99,1)),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -225,7 +232,7 @@ class _EditProfileState extends State<EditProfile> {
                             "Dabei seit dem ${widget.startDate}",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(52, 95, 104, 1),
+                                color: Color.fromRGBO(0, 48,99,1),
                                 fontSize: 16,
                                 letterSpacing: 2),
                             // textAlign: TextAlign.left
@@ -246,7 +253,7 @@ class _EditProfileState extends State<EditProfile> {
                             width: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(60.0),
-                              color: Color.fromRGBO(202, 170, 147, 1),
+                              color: Color.fromRGBO(225, 0, 25, 1),
                               // LinearGradient
                             ),
                             // BoxDecoration
@@ -284,6 +291,9 @@ class _EditProfileState extends State<EditProfile> {
   }
 }
 
+/**
+ * Diese Klasse sorgt für die gesamte Darstellung eines Profilbildes.
+ */
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
@@ -324,7 +334,7 @@ class _UserImageState extends State<UserImage> {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                      backgroundColor: Color.fromRGBO(52, 95, 104, 1),
+                      backgroundColor: Color.fromRGBO(0, 48,99,1),
                       child: Text(widget.name.substring(0, widget.name.contains(" ") ? widget.name.indexOf(" "): widget.name.length)),
                     ),
                   ])),
@@ -337,13 +347,16 @@ class _UserImageState extends State<UserImage> {
                   fit: StackFit.expand,
                   children: [
                     CircleAvatar(
-                        backgroundColor: Color.fromRGBO(52, 95, 104, 1),
+                        backgroundColor: Color.fromRGBO(0, 48,99,1),
                         backgroundImage: Image.network(profileImg!).image),
                   ])), // AppRoundImage.url
       ]),
     );
   }
 
+  /**
+   * Diese Methode lädt das eigene Profilbild aus dem Webspeicher herunter.
+   */
   void getProfilePicture() async {
     var downloadURL = await StorageMethods().getProfileImg(widget.userid);
 

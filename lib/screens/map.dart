@@ -7,6 +7,13 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
+/**
+ * Diese Klasse stellt das Fenster mit der Karte und den Meetings dar.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -14,6 +21,9 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
 
+  /**
+   * Diese build Methode stellt die Informationen der verschiedenen Meetings zur Verfügung.
+   */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +60,13 @@ class _MapScreenState extends State<MapScreen> {
 
 }
 
+/**
+ * Diese Klasse stellt das Fenster mit der Karte und den Meetings dar.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class MeetingMap extends StatefulWidget {
   List<Map<String, dynamic>> latLngList = [];
 
@@ -63,6 +80,7 @@ class _MeetingMapState extends State<MeetingMap> {
   final PopupController _popupController = PopupController();
 
   MapController _mapController = MapController();
+  //Standardzoom
   double _zoom = 11;
   List<Marker> _markers = [];
 
@@ -194,6 +212,9 @@ class _MeetingMapState extends State<MeetingMap> {
     }
   }
 
+  /**
+   * Erneuert die Lister der Positionsmarker.
+   */
   refreshMarkers() {
     _markers = widget.latLngList
         .map((point) => Marker(
@@ -210,6 +231,10 @@ class _MeetingMapState extends State<MeetingMap> {
     setState(() {});
   }
 
+  /**
+   * Diese Methode fragt beim Benutzer die Berechtigung an, den Standort des Handys zu benutzen.
+   * Bei Erlaubnis wird die Darstellung der Karte auf den aktuellen Standort versetzt.
+   */
   _getGeoLocationPosition(MapController controller) async {
     LocationPermission permission;
     permission = await Geolocator.checkPermission();

@@ -3,7 +3,20 @@ import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/**
+ * Mit dieser Klasse wird die Verbindung zur Datenbank in Firebase gesteuert.
+ * Alle Anfragen werden von den Methoden dieser Klasse vorgenommen.
+ *
+ * @author Paul Franken winf104387
+ */
 class DataBaseMethods {
+
+  /**
+   * Diese Methode überprüft, ob es bereits ein Nutzer mit der übergebenen GoogleId gibt.
+   *
+   * @param die GoogleId die überprüft werden soll.
+   * @return ein String, der nicht leer ist, wenn ein Nutzer existiert.
+   */
   Future<String> checkIfAccountExists(String accountId) async {
     String result = "";
     final userRef = FirebaseFirestore.instance.collection('users');
@@ -17,26 +30,43 @@ class DataBaseMethods {
     return result;
   }
 
-  Future addUserInfoToDB(
+  /**
+   * Diese Methode legt in der Datenbank in der Tabelle "Users" einen neuen Nutzer an.
+   *
+   * @param userInfoMap eine Map, die alle Informationen für einen neuen Nutzer enthält.
+   */
+  addUserInfoToDB(
       String userId, Map<String, dynamic> userInfoMap) async {
     log("DB: AddUser");
-    return FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
         .set(userInfoMap);
   }
 
+  /**
+   * Diese Methode liefert den Nutzer, der sich zu dem übergebenem Nutzernamen passt.
+   *
+   * @params username Der Nutzername, zu dem der Nutzer gefunden werden soll.
+   * @return der Nutzer als QuerySnapshot
+   */
   Future<Stream<QuerySnapshot>> getUserByUsername(String username) async {
-    log("DB: GestUser");
+    log("DB: GetUser");
     return FirebaseFirestore.instance
         .collection("users")
         .where("username", isEqualTo: username)
         .snapshots();
   }
 
-  Future addMessage(String chatRoomId, Map<String, dynamic> messageInfo) async {
+  /**
+   * Diese Methode fügt einem Chatroom eine neue Nachricht hinzu.
+   *
+   * @param chatRoomId Der Chatroom, der die Nachricht hinzgefügt werden soll.
+   * @param messageInfo Die Nachricht mit weiteren Informationen in Form einer Map.
+   */
+  addMessage(String chatRoomId, Map<String, dynamic> messageInfo) async {
     log("DB: AddMessage");
-    return FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("messages")
@@ -44,6 +74,14 @@ class DataBaseMethods {
         .set(messageInfo);
   }
 
+  /**
+   * Diese Methode legt einen neuen Chatraum an und fügt beiden Nutzern
+   * die Information in ihren Profilen hinzu.
+   *
+   * @params chatRoomInfoMap Informationen für den neuen Chatroom.
+   * @params myUserId Die Nutzerid des angemeldeten Nutzers.
+   * @params  partneruserid Die Nutzerid des Chatpartners.
+   */
   createChatRoom(Map<String, dynamic> chatRoomInfoMap, String myUserId,
       String partnerUserId) async {
     log("DB: createChatRoom");
@@ -76,16 +114,29 @@ class DataBaseMethods {
     }
   }
 
+  /**
+   * Diese Methode liefert alle Nachrichten eines Chatrooms.
+   * 
+   * @param chatRoomId der Chatroom von dem die Nachrichten geladen werden sollen.
+   * @return alle Nachrichten als Stream
+   */
   Future<Stream<QuerySnapshot>> getChatRoomMessages(
-      String chatRoomId, String myUserId) async {
-    return FirebaseFirestore.instance
-        .collection("chatrooms")
-        .doc(chatRoomId)
-        .collection("messages")
-        .orderBy("timeStamp", descending: true)
-        .snapshots();
+      String chatRoomId) async {
+      return FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(chatRoomId)
+          .collection("messages")
+          .orderBy("timeStamp", descending: true)
+          .snapshots();
+
   }
 
+  /**
+   * Diese Methode liefert lediglich die letzte Nachricht eines Chatrooms.
+   * 
+   *  @param chatRoomId der Chatroom von dem die letzte Nachricht geladen werden sollen. 
+   *  @return die letzte Nachricht
+   */
   Future<Map<String, dynamic>> getLastMessageOfChatRoom(
       String chatRoomId) async {
     QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
@@ -106,6 +157,14 @@ class DataBaseMethods {
     return lastMessage;
   }
 
+  /**
+   * Diese Methode liefert die ChatroomId anhand der beiden Nutzernamen der Teilnehmer.
+   * 
+   * @param partnerUsername der Nutzername des Partners
+   * @param myUserName der eigene Nutzername
+   * @param myUserId die eigene Nutzerid
+   * @return die ChatroomId, falls nicht vorhanden ist dies ein leerer String
+   */
   Future<String> getChatRoomIdByUsernames(
       String partnerUsername, String myUserName, String myUserId) async {
     final QuerySnapshot result = await FirebaseFirestore.instance
@@ -129,6 +188,12 @@ class DataBaseMethods {
     return documentId;
   }
 
+  /**
+   * Diese Methode liefert die UserId für den übergebenen Nutzernamen.
+   * 
+   * @parm userName der Nutzername zu dem die Id gefunden werden soll.
+   * @return die UserId die zum Nutzernamen passt.
+   */
   Future<String> getUserIdByUserName(String userName) async {
     final QuerySnapshot result =
         await FirebaseFirestore.instance.collection('users').get();
@@ -145,6 +210,12 @@ class DataBaseMethods {
     return documentId;
   }
 
+  /**
+   * Mit dieser Methode werden alle Information die Online zu dem Profilgespeichert sin
+   * offline in den SharedPreferences gespeichert.
+   * 
+   * @param die eigene UserId
+   */
   saveUserInformationFromOnlineLocal(String userId) async {
     var collection = FirebaseFirestore.instance.collection('users');
     var docSnapshot = await collection.doc(userId).get();
@@ -168,7 +239,13 @@ class DataBaseMethods {
     }
   }
 
-  getAllChats(String myUserId) {
+  /**
+   * Mit dieser Methode werden alle Chats für einen Nutzer geladen
+   * 
+   * @param myUserId die eigene UserId
+   * @return die Informationen aller Chaträume als Stream
+   */
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAllChats(String myUserId) {
     log("DB: GetAllChats");
     return FirebaseFirestore.instance
         .collection("users")
@@ -177,8 +254,14 @@ class DataBaseMethods {
         .snapshots();
   }
 
-  Future<String> getPartnersCompany(String partnerUsername) async {
-    String userId = await getUserIdByUserName(partnerUsername);
+  /**
+   * Diese Methode liefert das Unternehmen das in einem Profil gespeichert ist.
+   * 
+   * @param username der Nutzername zu dem das Unternehmen gefunden werden soll
+   * @return der Name des Unternehmens
+   */
+  Future<String> getPartnersCompany(String username) async {
+    String userId = await getUserIdByUserName(username);
     DocumentSnapshot<Map<String, dynamic>> result =
         await FirebaseFirestore.instance.collection("users").doc(userId).get();
     String company = "";
@@ -188,6 +271,12 @@ class DataBaseMethods {
     return company;
   }
 
+  /**
+   * Diese Methode liefert den Nutzernamen für die übergebene UserId.
+   *
+   * @parm userId die UserId zu dem der Nutzername gefunden werden soll.
+   * @return der Nutzername der zur UserId passt passt.
+   */
   Future<String> getUsernameById(String userId) async {
     DocumentSnapshot<Map<String, dynamic>> result =
         await FirebaseFirestore.instance.collection("users").doc(userId).get();
@@ -198,6 +287,12 @@ class DataBaseMethods {
     return username;
   }
 
+
+  /**
+   * Diese Methode fügt der Tabelle "Mettings" ein neues Treffen hinzu.
+   *
+   * @params meetingDetails die Meetinginformationen
+   */
   addMeeting(Map<String, dynamic> meetingDetails) async {
     log("DB: addMeeting");
     var uuidGenerator = const Uuid();
@@ -214,18 +309,56 @@ class DataBaseMethods {
     }
   }
 
+  /**
+   * Diese Methode liefert alle gespeicherten Meetings als Stream.
+   * 
+   * @return alle Meetings als Stream.
+   */
   getMeetingMarker() {
     final Stream<QuerySnapshot> stream =
         FirebaseFirestore.instance.collection('meetings').snapshots();
     return stream;
   }
 
-  getCompanyList() {
+  /**
+   * Diese Methode liefert alle gespeicherten Unternehmen als Stream.
+   *
+   * @return alle Unternehmen als Stream.
+   */
+  Stream getCompanyList() {
     final Stream<QuerySnapshot> stream =
         FirebaseFirestore.instance.collection('companys').snapshots();
     return stream;
   }
 
+  /**
+   * Diese Methode liefert alle gespeicherten Projekte als Stream.
+   *
+   * @return alle Projekte als Stream.
+   */
+  getProjectList() {
+    final Stream<QuerySnapshot> stream =
+    FirebaseFirestore.instance.collection('project').snapshots();
+    return stream;
+  }
+
+  /**
+   * Diese Methode liefert alle gespeicherten Branchen als Stream.
+   *
+   * @return alle Branchen als Stream.
+   */
+  getIndustryList() {
+    final Stream<QuerySnapshot> stream =
+    FirebaseFirestore.instance.collection('industry').snapshots();
+    return stream;
+  }
+
+  /**
+   * Diese Methode liefert alle Nutzer, die sich als Buddy für das Unternehmen gekennzeichnet haben.
+   * 
+   * @param companyId Das Unternehmen zu dem die Buddys geladen werden sollen.
+   * @param ownId Die eigene Id sodass man nicht selber in der Liste auftaucht.
+   */
   Future<Stream<QuerySnapshot>> getBuddysForCompany(
       String companyId, String ownId) async {
     return FirebaseFirestore.instance
@@ -236,16 +369,44 @@ class DataBaseMethods {
         .snapshots();
   }
 
-  Future<Stream<QuerySnapshot>> getBuddysForIndustry(
-      String companyId, String ownId) async {
+  /**
+   * Diese Methode liefert alle Nutzer, die sich als Buddy für das Projekt gekennzeichnet haben.
+   *
+   * @param projectId Das Projekt zu dem die Buddys geladen werden sollen.
+   * @param ownId Die eigene Id sodass man nicht selber in der Liste auftaucht.
+   */
+  Future<Stream<QuerySnapshot>> getBuddysForProjects(
+      String projectId, String ownId) async {
     return FirebaseFirestore.instance
         .collection("users")
-        .where("industryId", isEqualTo: companyId)
+        .where("projectId", isEqualTo: projectId)
         .where("userid", isNotEqualTo: ownId)
         .where("userMode", isEqualTo: true)
         .snapshots();
   }
 
+  /**
+   * Diese Methode liefert alle Nutzer, die sich als Buddy für diese Branche gekennzeichnet haben.
+   *
+   * @param industryId Die Branche zu dem die Buddys geladen werden sollen.
+   * @param ownId Die eigene Id sodass man nicht selber in der Liste auftaucht.
+   */
+  Future<Stream<QuerySnapshot>> getBuddysForIndustry(
+      String industryId, String ownId) async {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .where("industryId", isEqualTo: industryId)
+        .where("userid", isNotEqualTo: ownId)
+        .where("userMode", isEqualTo: true)
+        .snapshots();
+  }
+
+  /**
+   * Diese Methode dient dazu ein einzelnes Feld aus dem Profil eines Nutzers zu laden.
+   *
+   * @param field Das Feld was benötigt wird.
+   * @param userId DIe ID aus welchem die Information geladen werden soll.
+   */
   Future<String> getFieldFromUser(String field, String userId) async {
     DocumentSnapshot<Map<String, dynamic>> resultQ =
         await FirebaseFirestore.instance.collection("users").doc(userId).get();
@@ -256,6 +417,11 @@ class DataBaseMethods {
     return result;
   }
 
+  /**
+   * Diese Methode liefert eine Liste mit Strings mit den Namen aller Unternehmen
+   *
+   * @return Liste mit allen Namen der Unternehmen.
+   */
   getAllCompanys() {
     getData() async {
       return await FirebaseFirestore.instance.collection("companys").get();
@@ -270,6 +436,11 @@ class DataBaseMethods {
     return companys;
   }
 
+  /**
+   * Diese Methode liefert die Id zu dem übergenenen Unternehmensnamen.
+   *
+   * @return die Id des Unternehmens
+   */
   getCompanyId(String companyName) async {
     QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
         .instance
@@ -281,12 +452,11 @@ class DataBaseMethods {
     }
   }
 
-  getIndustryList() {
-    final Stream<QuerySnapshot> stream =
-    FirebaseFirestore.instance.collection('industry').snapshots();
-    return stream;
-  }
-
+  /**
+   * Diese Methode liefert eine Liste mit Strings mit den Namen aller Branchen
+   *
+   * @return Liste mit allen Namen der Branchen.
+   */
   getAllIndustrys() {
     getData() async {
       return await FirebaseFirestore.instance.collection("industry").get();
@@ -301,6 +471,11 @@ class DataBaseMethods {
     return industrys;
   }
 
+  /**
+   * Diese Methode liefert die Id zu dem übergenenen Branchennamen.
+   *
+   * @return die Id der Branche
+   */
   getIndustryId(String industryName)async {
     QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
         .instance
@@ -312,6 +487,12 @@ class DataBaseMethods {
     }
   }
 
+  /**
+   * Diese Methode ändert im Profil eines Benutzers ob er Buddy oder Seeker ist.
+   *
+   * @param index 0 wenn es sich um einen Buddy handelt
+   * @param userid die Id zum Benutzer bei dem die Information angepasst werden soll.
+   */
   setMode(int index, String userId) {
     Map<String, bool> userInfoMap = Map();
     userInfoMap["userMode"] = index == 0 ? true: false;

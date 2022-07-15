@@ -1,10 +1,18 @@
 import 'package:buddy/screens/details.dart';
 import 'package:buddy/services/database.dart';
-import 'package:buddy/services/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+/**
+ * Diese Klasse erstellt den HomeScreen der App. Es wird also die Liste der
+ * Unternehmen, Projekte und Branchen angezeigt.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class OverviewPage extends StatefulWidget {
   int mode;
   OverviewPage({required this.mode});
@@ -22,8 +30,14 @@ class _OverviewPageState extends State<OverviewPage> {
     super.initState();
   }
 
+  /**
+   * Bevor der Screen gestartet wird, werden die Informationen aus der Datenabnk geladen.
+   * Diese basieren darauf, welche Kategorie der Nutzer gewählt hat.
+   */
   doBeforeLaunch() async {
-    if(widget.mode == 1){
+    if(widget.mode == 0){
+      informationStream = await DataBaseMethods().getProjectList();
+    }else if(widget.mode == 1){
       informationStream = await DataBaseMethods().getCompanyList();
     }else if ( widget.mode == 2){
       informationStream = await DataBaseMethods().getIndustryList();
@@ -39,6 +53,9 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 
+  /**
+   * Diese Widget stellt die Liste der Informationen dar.
+   */
   Widget buildHome(BuildContext context) {
     return StreamBuilder(
         stream: informationStream,
@@ -57,6 +74,9 @@ class _OverviewPageState extends State<OverviewPage> {
         });
   }
 
+  /**
+   * Ein "Bucket" ist die gesamte Einheit eins Unternehmens, eines Projektes oder einer Brance.
+   */
   Widget buildBucket(BuildContext context, String text, String imgURL, String plink, String companyId, String name) {
     String link = plink;
     return Container(
@@ -65,7 +85,7 @@ class _OverviewPageState extends State<OverviewPage> {
       decoration: BoxDecoration(
           border: Border.all(
             width: 2,
-            color: Color.fromRGBO(202, 170, 147, 1),
+            color: Color.fromRGBO(0, 48, 99, 1),
           ),
           borderRadius: const BorderRadius.all(const Radius.circular(20))),
       child: Column(
@@ -117,7 +137,7 @@ class _OverviewPageState extends State<OverviewPage> {
               icon: const Icon(Icons.arrow_forward),
               label: Text("Mehr..."),
               heroTag: null,
-              backgroundColor: Color.fromRGBO(95, 152, 161, 1),
+              backgroundColor: Color.fromRGBO(225, 0, 5, 1),
             ),
           )
         ],

@@ -3,12 +3,18 @@ import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../services/storage.dart';
 import 'chat.dart';
 
+/**
+ * Diese Klasse stellt die Detailansicht von Unternehmen, Branchen oder Projekten dar.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class DetailsPage extends StatefulWidget {
   String text, link, imgURL, Id, name;
   int mode;
@@ -29,12 +35,19 @@ class _DetailsPageState extends State<DetailsPage> {
   Stream? buddyStream;
   String myUserId = "";
 
+
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     doBeforeLaunch();
     super.initState();
   }
 
+  /**
+   * Vor dem Start des Fensters werde entweder die Buddys für Unternehmen oder Branchen heruntergeladen.
+   */
   doBeforeLaunch() async {
     myUserId = (await SharedPreferencesHelper().getUserId())!;
     if(widget.mode == 1){
@@ -74,13 +87,14 @@ class _DetailsPageState extends State<DetailsPage> {
                         left: 10, top: 50, right: 10, bottom: 20),
                   ),
                   Container(
+                    alignment: Alignment.center,
                     child: Text(
                       widget.name,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color.fromRGBO(52, 95, 104, 1),
                           fontSize: 22,
-                          letterSpacing: 10),
+                          letterSpacing: 3),
                       // textAlign: TextAlign.left
                     ),
                   ),
@@ -99,6 +113,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       // textAlign: TextAlign.left
                     ),
                   ),
+                  //Der Link zu weiteren Informationen oder Jobangeboten
                   InkWell(
                     onTap: () async {
                       var urllaunchable = await canLaunch(
@@ -121,7 +136,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       // BoxDecoration
                       padding: const EdgeInsets.all(0),
                       child: Text(
-                        (widget.mode == 2 ? "Mehr Informationen": "Jobs"),
+                        ((widget.mode == 2 || widget.mode == 0) ? "Mehr Informationen": "Jobs"),
                         textAlign: TextAlign.center,
                         style:
                             TextStyle(fontWeight: FontWeight.bold), // TextStyle
@@ -157,6 +172,7 @@ class _DetailsPageState extends State<DetailsPage> {
             ),
           ),
         ),
+        //Die Darstellung der Liste der Buddys.
         Container(
           child: Scaffold(
             body: SafeArea(
@@ -164,7 +180,7 @@ class _DetailsPageState extends State<DetailsPage> {
               Column(children: [
                 Container(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
-                    child: searchUsersList())
+                    child: buddyList())
               ]),
               Positioned(
                 top: 0.0,
@@ -198,7 +214,10 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Widget searchUsersList() {
+  /**
+   * Diese Widget sorgt für die Darstellung der Liste mit den Buddys.
+   */
+  Widget buddyList() {
     return StreamBuilder(
       stream: buddyStream,
       builder: (context, snapshot) {
@@ -223,6 +242,12 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 }
 
+/**
+ * Mit dieser Klasse wird ein Element der Liste von den Buddys dargestellt.
+ * Sie beinhaltet das Profilfoto, den Namen und das Unternehmen des Buddys.
+ * Beim Klick wird ein BottomDialog mit dem gesamten Profil des Buddys
+ * angezeigt und die Möglichkeit direkt einen Chat zu starten
+ */
 class SearchListItem extends StatefulWidget {
   String partnerUsername;
 
@@ -244,6 +269,9 @@ class _SearchListItemState extends State<SearchListItem> {
   String myUserName = "";
 
 
+  /**
+   * Lädt das Unternehmen des Partners aus der Datenbank.
+   */
   getPartnersCompany() async {
     partnerCompany =
         await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
@@ -316,6 +344,9 @@ class _SearchListItemState extends State<SearchListItem> {
     );
   }
 
+  /**
+   * Zeigt ein Dialogfenster mit dem gesamten Profil des Buddys und gibt die Möglichkeit diekt einen Chat zu starten.
+   */
   showBottomDialog() async {
     await showModalBottomSheet(
         context: context,
@@ -547,6 +578,9 @@ class _SearchListItemState extends State<SearchListItem> {
   }
 }
 
+/**
+ * Diese Klasse sorgt für die gesamte Darstellung eines Profilbildes.
+ */
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
@@ -606,7 +640,9 @@ class _UserImageState extends State<UserImage> {
       ]),
     );
   }
-
+  /**
+   * Diese Methode sorgt dafür, dass das Profilbild des Partners angezeigt werden kann
+   */
   void getPartnerUserIdAndDownloadImage() async {
     partnerId =
         await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);

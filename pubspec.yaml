@@ -41,10 +41,9 @@ dev_dependencies:
   flutter_lints: ^1.0.0
 
 fonts:
-  - family: SansSerif
+  - family: Smooch
     fonts:
-      - asset:
-           - assets/OpenSans-Medium.ttf
+      - asset : assets/test.ttf
 
 flutter:
   uses-material-design: true
@@ -57,3 +56,6 @@ flutter:
     - assets/bottom22.png
     - assets/f_logo.png
     - assets/otto.png
+    - assets/ank_red.jpg
+    - f_logo.jpg
+    - assets/anker.png

@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 import '../services/database.dart';
 
 
+/**
+ * Diese Klasse stellt den Welcomescreen dar.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
@@ -26,10 +33,13 @@ class _SignInState extends State<SignIn> {
     super.initState();
   }
 
+  /**
+   * Vor dem Start des Fensters werden bereits die Namen der Unternehmen
+   * und Branchen heruntergeladen. Diese werden beim Profile erstellen auf dem nächsten Screen benötigt.
+   */
   doBeforeLaunch() async {
     companys = await DataBaseMethods().getAllCompanys();
     industrys = await DataBaseMethods().getAllIndustrys();
-
     setState(() {});
   }
 
@@ -60,7 +70,7 @@ class _SignInState extends State<SignIn> {
                 "BUDDY",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: const Color.fromRGBO(195, 118, 75, 1),
+                    color: const Color.fromRGBO(255,0,5,1),
                     fontSize: 40,
                     letterSpacing: size.width * 0.02),
                 // textAlign: TextAlign.left
@@ -69,7 +79,7 @@ class _SignInState extends State<SignIn> {
                 "Willkommen im Hafen",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(52, 95, 104, 1),
+                    color: const Color.fromRGBO(0, 92, 169, 1),
                     fontSize: 20,
                     letterSpacing: size.width * 0.01),
                 // textAlign: TextAlign.left

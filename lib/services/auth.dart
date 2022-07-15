@@ -12,13 +12,41 @@ import 'package:uuid/uuid.dart';
 
 import '../screens/createProfile.dart';
 
+/**
+ * Mit dieser Klasse wird die Verbindung zum Authentification Service in Firebase gesteuert.
+ * Alle Anfragen werden von den Methoden dieser Klasse gesteuert.
+ *
+ * @author Paul Franken winf104387
+ */
 class AuthMethods {
+
+  //Instanz für die Verbindung zum Service.
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  getCurrentUseres() async {
+  /**
+   * Bei dieser Methode wird der Nutzer zurückgegeben,
+   * der aktuell beim Service in Firebase angemeldet ist.
+   *
+   * @return Future<User?> der zur Zeit angemeldete Nutzer.
+   */
+  Future<User?> getCurrentUseres() async {
     return await auth.currentUser;
   }
 
+  /**
+   * Diese Methode kümmert sich um den gesamten Anmeldeprozess über die GoogleAPI.
+   * Sollte noch kein Nutzer angemeldet sein, wird dem Nuter hier die Mögichkeit gegeben.
+   * SOllte der dann angemeldete Nutzer sich bereits zuvor regrestriert haben,
+   * wird er auf den HomeScreen weitergeleitet.
+   * Andernfalls wird er zum CreatProfile Scereen geleitet.
+   *
+   * @param context Der Kontext der App um die Weiterleitung auf andere Screens zu ermöglichen
+   * @param companys Die Liste der Unternehmen. Diese wurde bereits beim Welcome-Screen geladen
+   *        und werden weitergegebn für den Fall, das ein Profil noch erstellt werden muss.
+   * @param industrys Die Liste der Branchen. Diese wurde bereits beim Welcome-Screen geladen
+   *        und werden weitergegebn für den Fall, das ein Profil noch erstellt werden muss.
+   *
+   */
   signInWithGoogle(BuildContext context, List<String> companys, List<String> industrys) async {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -71,7 +99,12 @@ class AuthMethods {
     }
   }
 
-  Future signOut() async {
+
+  /**
+   * Bei dieser Methode wird der aktuelle Benutzer von Google abgemeldet,
+   * sodass bei der nächsten Anmeldung erneut der Google Nutzer ausgewählt werden muss.
+   */
+  signOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     final GoogleSignIn _googleSignIn = GoogleSignIn();

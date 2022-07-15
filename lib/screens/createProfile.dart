@@ -11,9 +11,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_dialogs/material_dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
-
 import '../services/database.dart';
 
+/**
+ * Diese Klasse erzeugt das Fesnter um ein Profil anzulegen.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class CreateProfile extends StatefulWidget {
   final Map<String, dynamic> userInfoMap;
   List<String> companys;
@@ -36,6 +42,9 @@ class _CreateProfile extends State<CreateProfile> {
   String companyChooser = 'Wählen';
   String industryChooser = 'Wählen';
 
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     widget.companys.insert(0, "Wählen");
@@ -45,6 +54,7 @@ class _CreateProfile extends State<CreateProfile> {
 
   @override
   Widget build(BuildContext context) {
+    //Hinzufügen der Listener für die Text Felder.
     usernameController.addListener(() {
       setState(() {});
     });
@@ -113,6 +123,7 @@ class _CreateProfile extends State<CreateProfile> {
                         ),
                       ],
                     ),
+                    //Stellt das Profilbild dar.
                     UserImage(
                       onFileChanged: (profileImg) {
                         setState(() {});
@@ -439,6 +450,7 @@ class _CreateProfile extends State<CreateProfile> {
                                   experienceController3.text +
                                   "|" +
                                   experienceController4.text);
+                          //Die Inforamtionen für einen Nutzer werden gesammelt in einer Map
                           Map<String, dynamic> addInformation = {
                             "username": usernameController.text,
                             "startDate": now,
@@ -461,6 +473,9 @@ class _CreateProfile extends State<CreateProfile> {
                                 selectedMeetings.contains(2) ? "true" : "false"
                           };
 
+                          //Hier wird der BottomDialog angezeigt,
+                          //um dem Beutzer die Möglichkeit zu geben den
+                          // Anker mit dem Account zu verknüpfen.
                           Dialogs.bottomMaterialDialog(
                               msg:
                                   'Halte dein Handy jetzt in die Nähe deines Ankers um deinen Account mit deinem Anker zu verknüpfen. Falls du ihn gerade nicht in der Nähe hast, kannst du das später im Profil nachholen.',
@@ -474,6 +489,7 @@ class _CreateProfile extends State<CreateProfile> {
                                             widget.userInfoMap["userid"],
                                             widget.userInfoMap)
                                         .then((value) =>
+                                    //Der Benutzer wird auf den HomeScreen weitergeleitet.
                                             Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(
@@ -550,6 +566,9 @@ class _CreateProfile extends State<CreateProfile> {
   }
 }
 
+/**
+ * Diese Klasse sorgt für die gesamte Darstellung eines Profilbildes.
+ */
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
@@ -641,6 +660,10 @@ class _UserImageState extends State<UserImage> {
     );
   }
 
+  /**
+   * Diese Methode öffnet ein BottomDialog um dem Nutzer die Auswahl zu geben,
+   * ein Foto aufzunehmen oder aus der Gallerie hochzuladen.
+   */
   Future _selectPhoto() async {
     await showModalBottomSheet(
         context: context,
@@ -673,6 +696,9 @@ class _UserImageState extends State<UserImage> {
             ));
   }
 
+  /**
+   * Diese Methode startet die Kamara oder die Gallerie um ein Bild für das Profil zu wählen.
+   */
   Future pickImage(ImageSource source) async {
     final pickedFile =
         await imagePicker.pickImage(source: source, imageQuality: 50);

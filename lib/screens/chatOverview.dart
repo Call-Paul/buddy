@@ -1,23 +1,26 @@
-import 'dart:io';
-
-import 'package:buddy/screens/createProfile.dart';
 import 'package:buddy/services/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../helperfunctions/sharedpref_helper.dart';
 import '../services/database.dart';
 import 'chat.dart';
 
+/**
+ * Diese Klasse erzeugt die Chatübersicht.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class ChatOverview extends StatefulWidget {
   @override
   _ChatOverview createState() => _ChatOverview();
 }
 
 class _ChatOverview extends State<ChatOverview> {
+  //Gibt an ob die Suchfunktion gerede genutzt wird.
   bool isSearching = false;
   TextEditingController searchEditingController = TextEditingController();
   Stream? usersStream;
@@ -25,6 +28,9 @@ class _ChatOverview extends State<ChatOverview> {
   late String myName, myUserName, myEmail, myUserId;
   bool folded = false;
 
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     getMyInfoFormSharedPreferences();
@@ -126,6 +132,9 @@ class _ChatOverview extends State<ChatOverview> {
     );
   }
 
+  /**
+   * Bei dieser Methode werden einige Informationen von den Sharedpreferences geladen.
+   */
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
@@ -135,6 +144,10 @@ class _ChatOverview extends State<ChatOverview> {
     setState(() {});
   }
 
+  /**
+   * Diese Methode wird ausgeführt wenn eine Suche angefordert wird.
+   * Mit der Datenbankmethode wird ein Nutzer nach dem Nutzernamen gesucht.
+   */
   onSearchBtnClick() async {
     usersStream =
         await DataBaseMethods().getUserByUsername(searchEditingController.text);
@@ -143,6 +156,11 @@ class _ChatOverview extends State<ChatOverview> {
   }
 }
 
+/**
+ * Diese Klasse stellt ein Widget zur Verfügung, welches einen Chat darstellt.
+ * Es werden Informationen zum Namen, zur letzten Nachricht und zum letztem Sendezeitpunkt angezeigt.
+ *
+ */
 class ChatWidget extends StatefulWidget {
   String partnerUsername, myUserId, chatRoomId;
 
@@ -161,34 +179,54 @@ class _ChatState extends State<ChatWidget> {
   String lastTimeStamp = "";
   String partnerUserId = "";
 
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     getLastMessage();
     super.initState();
   }
 
+  /**
+   * Diese Methode lädt die letze Nachricht aus einem Chat herunter.
+   * Ebenfalls wird der Zeitstempel der letzten Nachricht heruntergeladen.
+   * Ist eine Nachricht älter als 24 Stunden wird der Text "Gestern" oder das Datum angezeigt.
+   */
   getLastMessage() async {
     Map<String, dynamic> lastInfo =
         await DataBaseMethods().getLastMessageOfChatRoom(widget.chatRoomId);
     lastMessage = lastInfo["message"];
     Timestamp t = lastInfo["time"];
 
-    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
-    if (t.toDate().day == yesterday.day) {
-      lastTimeStamp = "Gestern";
-    } else if (t.toDate().day == yesterday.add(const Duration(days: 1)).day) {
-      var format = DateFormat('HH:mm');
-      lastTimeStamp = format.format(t.toDate());
-    }else {
-      var format = DateFormat('dd.MM.yy');
-      lastTimeStamp = format.format(t.toDate());
+    if (t != null) {
+      DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+      if (t
+          .toDate()
+          .day == yesterday.day) {
+        lastTimeStamp = "Gestern";
+      } else if (t
+          .toDate()
+          .day == yesterday
+          .add(const Duration(days: 1))
+          .day) {
+        var format = DateFormat('HH:mm');
+        lastTimeStamp = format.format(t.toDate());
+      } else {
+        var format = DateFormat('dd.MM.yy');
+        lastTimeStamp = format.format(t.toDate());
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
+  /**
+   * Diese Methode baut das Widget.
+   */
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      //Bei einem Klick wird das Chatfenster geöffnet.
       onTap: () async {
         Navigator.push(
                 context,
@@ -260,6 +298,9 @@ class _ChatState extends State<ChatWidget> {
   }
 }
 
+/**
+ * Diese Klasse sorgt für die gesamte Darstellung eines Profilbildes.
+ */
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
@@ -320,6 +361,9 @@ class _UserImageState extends State<UserImage> {
     );
   }
 
+  /**
+   * Diese Methode sorgt dafür, dass das Profilbild des Partners angezeigt werden kann
+   */
   void getPartnerUserIdAndDownloadImage() async {
     partnerId =
         await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
@@ -346,12 +390,20 @@ class SearchListItem extends StatefulWidget {
   _SearchListItemState createState() => _SearchListItemState();
 }
 
+/**
+ * Diese Klasse stellt die Ergebnisse der Such nach einem utzer dar.
+ *
+ * @author Paul Franken winf104387
+ */
 class _SearchListItemState extends State<SearchListItem> {
   String? profileImg;
   String partnerUserId = "";
 
   String partnerCompany ="";
 
+  /**
+   * Diese Methode lädt das Unternehmens des Partners aus der Datenbank.
+   */
   getPartnersCompany() async {
     partnerCompany =
     await DataBaseMethods().getPartnersCompany(widget.partnerUsername);

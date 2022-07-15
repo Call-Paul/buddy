@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:buddy/helperfunctions/sharedpref_helper.dart';
 import 'package:buddy/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +7,13 @@ import 'package:flutter/services.dart';
 
 import '../services/storage.dart';
 
+/**
+ * Diese Klasse stellt das Chatfenster mit einem Partner dar.
+ * Es wird sich sowohl um die grafische Darstellung,
+ * als auch um die logischen Aufrufe der entsprechenden Methoden gekümmert.
+ *
+ * @author Paul Franken winf104387
+ */
 class Chat extends StatefulWidget {
   final String partnerUsername;
 
@@ -19,15 +24,23 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  //Die ID des aktuellen Chatrooms
   String chatRoomId = "";
+  //Die DownloadURL zum Profilfotos des Chatpartners
   String? profileImg;
 
+  //Alle Nachrichten als Stream
   Stream messageStream = const Stream.empty();
+  //Informtionen zum eigenen Benutzer
   late String myName, myUserName, myEmail, myUserId;
   TextEditingController messageTextEditingController = TextEditingController();
 
+  //Das Unternehmen des Partners
   String partnerCompany = "";
 
+  /**
+   * Bei dieser Methode werden einige Informationen von den Sharedpreferences geladen.
+   */
   getMyInfoFormSharedPreferences() async {
     myName = (await SharedPreferencesHelper().getUserDisplayName())!;
     myUserName = (await SharedPreferencesHelper().getUserName())!;
@@ -37,6 +50,13 @@ class _ChatState extends State<Chat> {
         .getChatRoomIdByUsernames(widget.partnerUsername, myUserName, myUserId);
   }
 
+  /**
+   * Bei diesem Widget handelt es sich um die grafische Darstellung einer einzelnen Nachricht.
+   *
+   * @params message Die Nachricht
+   * @params sendByMe Dieser boolean gibt an, von welchem Benutzer die
+   *         Nachricht geschickt wurde. Daruf basierend wird das Design der Nachricht angepasst.
+   */
   Widget chatMessage(String message, bool sendByMe) {
     return Row(
         mainAxisAlignment:
@@ -53,8 +73,8 @@ class _ChatState extends State<Chat> {
                     bottomLeft:
                         sendByMe ? Radius.circular(24) : Radius.circular(0)),
                 color: sendByMe
-                    ? const Color.fromRGBO(128, 172, 173, 1)
-                    : const Color.fromRGBO(238, 238, 238, 1)),
+                    ? const Color.fromRGBO(225, 0, 5, 1)
+                    : const Color.fromRGBO(0, 92, 169, 1)),
             padding: EdgeInsets.all(16),
             child: Text(
               message,
@@ -64,6 +84,9 @@ class _ChatState extends State<Chat> {
         ]);
   }
 
+  /**
+   * Diese Widget ist die grafische Darstellung aller gesendeten Nachrichten.
+   */
   Widget chatMessages() {
     return StreamBuilder(
       stream: messageStream,
@@ -79,28 +102,49 @@ class _ChatState extends State<Chat> {
                       (snapshot.data! as QuerySnapshot).docs[index];
                   return chatMessage(ds["message"], myUserName == ds["sendBy"]);
                 })
-            : const Center(
-                child: CircularProgressIndicator(),
+            :  Center(
+                child: Container(),
               );
       },
     );
   }
 
+  /**
+   * Diese Methode wird beim Start des Fesnters aufgeruden und lädt aus der Datenbank die ChatroomId anhand der Nutzernamen.
+   * Sollte die ChatroomId existieren, werden alle Nachrichten heruntergeladen.
+   */
   getAndSetMessages() async {
-    messageStream =
-        await DataBaseMethods().getChatRoomMessages(chatRoomId, myUserId);
+    chatRoomId = await DataBaseMethods()
+        .getChatRoomIdByUsernames(widget.partnerUsername, myUserName, myUserId);
+    if (chatRoomId == "") {
+      messageStream = Stream.empty();
+    } else {
+      messageStream =
+          await DataBaseMethods().getChatRoomMessages(chatRoomId);
+    }
+
     setState(() {});
   }
 
+  /**
+   * Diese Methode lädt das Unternehmen des Partners aus der Datenbank.
+   */
   getPartnersCompany() async {
     partnerCompany =
         await DataBaseMethods().getPartnersCompany(widget.partnerUsername);
     setState(() {});
   }
 
-  addMessage() {
-    if (messageTextEditingController.text != "") {
-      String message = messageTextEditingController.text;
+  /**
+   * Wenn der Nutzer auf senden drückt, sorgt diese Methode dafür,
+   * dass die Nachricht an den Datenbankservice weitergegeben wird und somit hochgeladen wird.
+   */
+  addMessage() async{
+    String message = messageTextEditingController.text;
+
+    chatRoomId = await DataBaseMethods()
+        .getChatRoomIdByUsernames(widget.partnerUsername, myUserName, myUserId);
+    if (message != "") {
 
       var timeStamp = DateTime.now();
 
@@ -114,18 +158,28 @@ class _ChatState extends State<Chat> {
     }
   }
 
+  /**
+   * Diese Methode wird beim Start des Fensters aufgerufen und sorgt dafür,
+   * dass alle wichtigen Methoden zum Start ausgeführt werden.
+   */
   doThisOnLaunch() async {
     await getMyInfoFormSharedPreferences();
     await getAndSetMessages();
     await getPartnersCompany();
   }
 
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     doThisOnLaunch();
     super.initState();
   }
 
+  /**
+   * Die build Methode leifert ein Widget für den gesamten Screen.
+   */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,6 +207,7 @@ class _ChatState extends State<Chat> {
                 SizedBox(
                   width: 2,
                 ),
+                //Das Profilbild es Partners
                 UserImage(
                     onFileChanged: (profileImg) {
                       setState(() {});
@@ -162,6 +217,7 @@ class _ChatState extends State<Chat> {
                 SizedBox(
                   width: 12,
                 ),
+                //Der Name und das Unternehmen des Partners
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +275,12 @@ class _ChatState extends State<Chat> {
                           SizedBox(
                             width: 15,
                           ),
+                          //Dieser Button führt de Aktion des Sendens einer Nachricht aus.
                           FloatingActionButton(
                             onPressed: () {
                               addMessage();
                               messageTextEditingController.text = "";
-                              setState((){});
+                              setState(() {});
                             },
                             child: Icon(
                               Icons.send,
@@ -245,6 +302,9 @@ class _ChatState extends State<Chat> {
   }
 }
 
+/**
+ * Diese Klasse sorgt für die gesamte Darstellung eines Profilbildes.
+ */
 class UserImage extends StatefulWidget {
   final Function(String profileImg) onFileChanged;
 
@@ -260,6 +320,9 @@ class _UserImageState extends State<UserImage> {
   String? profileImg;
   String partnerId = "";
 
+  /**
+   * Die Methode die vom Frameowrk zum Start des Fensters aufgerufen wird.
+   */
   @override
   void initState() {
     getPartnerUserIdAndDownloadImage();
@@ -282,9 +345,11 @@ class _UserImageState extends State<UserImage> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.black87,
-                      child: Text(
-                          widget.partnerUsername.substring(0, widget.partnerUsername.contains(" ") ? widget.partnerUsername.indexOf(" "): widget.partnerUsername.length)
-                          ),
+                      child: Text(widget.partnerUsername.substring(
+                          0,
+                          widget.partnerUsername.contains(" ")
+                              ? widget.partnerUsername.indexOf(" ")
+                              : widget.partnerUsername.length)),
                     ),
                   ])),
         if (profileImg != null)
@@ -307,6 +372,9 @@ class _UserImageState extends State<UserImage> {
     );
   }
 
+  /**
+   * Diese Methode sorgt dafür, dass das Profilbild des Partners angezeigt werden kann
+   */
   void getPartnerUserIdAndDownloadImage() async {
     partnerId =
         await DataBaseMethods().getUserIdByUserName(widget.partnerUsername);
